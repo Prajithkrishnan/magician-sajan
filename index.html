@@ -1,1404 +1,1095 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magician Sajan - Professional Magician</title>
+    <title>Magician Sajan | Master Illusionist & Mentalist | Nanniode, Palakkad</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap">
+
+    <!-- Fonts: Apple's SF Pro Display (via CDN) & Noto Sans Malayalam -->
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Three.js for 3D Interactive WebGL Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Vanilla Tilt for Reactive 3D Card Tilt Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+
+    <!-- GSAP Core & ScrollTrigger for Premium Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"SF Pro Display"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                        malayalam: ['"Noto Sans Malayalam"', '"SF Pro Display"', 'sans-serif'],
+                    },
+                    colors: {
+                        gold: {
+                            DEFAULT: '#D4AF37',
+                            light: '#F5E6AB',
+                            dark: '#997E25'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         :root {
-            --primary-color: #000;
-            --secondary-color: #fff;
-            --accent-color: #ff3366;
-            --text-color: #1d1d1f;
-            --light-gray: #f5f5f7;
-            --dark-gray: #86868b;
-            --animation-duration: 0.8s;
-            --section-padding: 120px;
+            --bg-body: #F5F5F7;
+            --surface-glass: rgba(255, 255, 255, 0.72);
+            --surface-solid: #FFFFFF;
+            --border-glass: rgba(0, 0, 0, 0.08);
+            --text-primary: #1D1D1F;
+            --text-secondary: #86868B;
+            --nav-bg: rgba(245, 245, 247, 0.82);
+            --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.06);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        [data-theme="dark"] {
+            --bg-body: #000000;
+            --surface-glass: rgba(28, 28, 30, 0.62);
+            --surface-solid: #1C1C1E;
+            --border-glass: rgba(255, 255, 255, 0.12);
+            --text-primary: #F5F5F7;
+            --text-secondary: #86868B;
+            --nav-bg: rgba(0, 0, 0, 0.8);
+            --card-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
         }
 
         body {
-            background-color: var(--secondary-color);
-            color: var(--text-color);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.015em;
+            transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease;
         }
 
-        /* Header Styles - Apple-like Navbar */
-        header {
-            position: fixed;
-            top: 0;
+        /* Apple-Grade Frosted Glass Surfaces */
+        .apple-glass {
+            background: var(--surface-glass);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--card-shadow);
+        }
+
+        .apple-nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        /* Gradients */
+        .apple-title-gradient {
+            background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.72) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="light"] .apple-title-gradient {
+            background: linear-gradient(180deg, #1D1D1F 0%, #434344 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFE79A 0%, #D4AF37 60%, #9E7D17 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="light"] .gold-gradient-text {
+            background: linear-gradient(135deg, #997E25 0%, #B8861B 60%, #745507 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Infinite Marquee Animation */
+        .marquee-wrapper {
             width: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 1000;
-            padding: 0 22px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 44px;
-            transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        .logo {
-            color: var(--secondary-color);
-            font-size: 21px;
-            font-weight: 500;
-            text-decoration: none;
-            opacity: 0;
-            transform: translateY(-10px);
-            animation: fadeInDown var(--animation-duration) forwards 0.3s;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-toggle {
-            display: none;
-        }
-
-        .nav-toggle-label {
-            color: var(--secondary-color);
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 1001;
-            opacity: 0;
-            transform: translateY(-10px);
-            animation: fadeInDown var(--animation-duration) forwards 0.4s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-        }
-
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            clip-path: circle(0% at 100% 0);
-            transition: clip-path 1s cubic-bezier(0.86, 0, 0.07, 1);
-            z-index: 999;
-        }
-
-        .nav-toggle:checked~nav {
-            clip-path: circle(150% at 100% 0);
-        }
-
-        nav a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-size: 28px;
-            margin: 15px 0;
-            padding: 10px 20px;
-            position: relative;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            font-weight: 300;
-            letter-spacing: -0.5px;
-        }
-
-        nav a:hover {
-            color: var(--accent-color);
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 1px;
-            background-color: var(--accent-color);
-            transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        nav a:hover::after {
-            width: 100%;
-            left: 0;
-        }
-
-        /* Header Social Icons */
-        .header-social {
-            display: flex;
-            gap: 15px;
-            margin-right: 20px;
-            opacity: 0;
-            transform: translateY(-10px);
-            animation: fadeInDown var(--animation-duration) forwards 0.5s;
-        }
-
-        .header-social a {
-            color: var(--secondary-color);
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .header-social a:hover {
-            color: var(--accent-color);
-            transform: translateY(-2px);
-        }
-
-
-        /* Hero Carousel Styles */
-        .hero {
-            position: relative;
-            height: 100vh;
             overflow: hidden;
-            margin-top: 44px;
-        }
-
-        .hero-carousel {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        .hero-slide {
-            min-width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
+            white-space: nowrap;
             position: relative;
             display: flex;
-            justify-content: center;
             align-items: center;
-            text-align: center;
         }
-
-        .hero-slide::before {
-            content: '';
+        
+        .marquee-wrapper::before,
+        .marquee-wrapper::after {
+            content: "";
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
+            width: 15%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .hero-content {
-            position: relative;
             z-index: 2;
-            max-width: 800px;
-            padding: 0 20px;
-            color: white;
-            transform: translateY(40px);
-            opacity: 0;
-            transition: all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+            pointer-events: none;
         }
-
-        .hero-slide.active .hero-content {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            margin-bottom: 20px;
-            font-weight: 600;
-            line-height: 1.1;
-            letter-spacing: -0.5px;
-        }
-
-        .hero p {
-            font-size: clamp(1rem, 2vw, 1.8rem);
-            margin-bottom: 30px;
-            font-weight: 300;
-            line-height: 1.4;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .hero .btn {
-            padding: 12px 30px;
-            background-color: transparent;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: 400;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero .btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
+        .marquee-wrapper::before {
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--accent-color);
-            z-index: -1;
-            transform: translateX(-100%);
-            transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            background: linear-gradient(to right, var(--bg-body) 0%, transparent 100%);
+        }
+        .marquee-wrapper::after {
+            right: 0;
+            background: linear-gradient(to left, var(--bg-body) 0%, transparent 100%);
         }
 
-        .hero .btn:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-3px);
-        }
-
-        .hero .btn:hover::after {
-            transform: translateX(0);
-        }
-
-        /* Carousel Controls */
-        .carousel-control {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            font-size: 1.5rem;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 10;
+        .marquee-content {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 4rem;
+            padding-left: 4rem;
+            animation: marquee-scroll 35s linear infinite;
+        }
+
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .marquee-logo {
+            flex-shrink: 0;
+            height: 40px;
+            opacity: 0.5;
+            filter: grayscale(100%) contrast(120%);
             transition: all 0.3s ease;
-            opacity: 0.7;
-        }
-
-        .carousel-control:hover {
-            opacity: 1;
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        .prev {
-            left: 20px;
-        }
-
-        .next {
-            right: 20px;
-        }
-
-        /* Carousel Indicators */
-        .carousel-indicators {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
-            gap: 10px;
-            z-index: 10;
-        }
-
-        .carousel-indicator {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 0;
-        }
-
-        .carousel-indicator.active {
-            background-color: var(--accent-color);
-            transform: scale(1.8);
-        }
-
-        /* About Section */
-        .about {
-            padding: var(--section-padding) 20px;
-            background-color: var(--secondary-color);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .section-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            font-size: 3.5rem;
-            text-align: center;
-            margin-bottom: 60px;
-            opacity: 0;
-            transform: translateY(30px);
-            font-weight: 600;
-            letter-spacing: -1px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background-color: var(--accent-color);
-            border-radius: 2px;
-        }
-
-        .about-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 60px;
             align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
         }
 
-        .about-text {
-            flex: 1;
-            min-width: 300px;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .about-text p {
-            font-size: 1.4rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            font-weight: 300;
-            color: var(--dark-gray);
-            position: relative;
-            padding-left: 30px;
-        }
-
-        .about-text p::before {
-            content: '✦';
-            position: absolute;
-            left: 0;
-            top: 0;
-            color: var(--accent-color);
-            font-size: 1.2rem;
-        }
-
-        .about-image {
-            flex: 1;
-            min-width: 300px;
-            max-width: 500px;
-            border-radius: 20px;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(30px);
-            position: relative;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .about-image::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border: 2px dashed var(--accent-color);
-            border-radius: 25px;
-            z-index: -1;
-            animation: rotate 20s linear infinite;
-        }
-
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
-            border-radius: 20px;
-        }
-
-        .about-image:hover img {
+        .marquee-logo:hover {
+            opacity: 1;
+            filter: grayscale(0%);
             transform: scale(1.05);
         }
 
-        /* Social Icons */
-        .social-icons {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
+        /* WhatsApp Floating Icon Pulse */
+        @keyframes apple-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55); }
+            70% { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        .social-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--light-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        .whatsapp-float-btn {
+            animation: apple-pulse 2.2s infinite;
         }
 
-        .social-icon:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        /* Form Input Apple Style */
+        .apple-input {
+            background: rgba(130, 130, 137, 0.08);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .social-icon.whatsapp {
-            background-color: #25D366;
-            color: white;
+        .apple-input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            background: rgba(130, 130, 137, 0.14);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18);
         }
 
-        .social-icon.facebook {
-            background-color: #3b5998;
-            color: white;
-        }
-
-        .social-icon.instagram {
-            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F56040, #F77737, #FCAF45, #FFDC80);
-            color: white;
-        }
-
-        /* Gallery Carousel Section */
-        .gallery {
-            padding: var(--section-padding) 20px;
-            background-color: var(--light-gray);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .gallery-carousel-container {
-            position: relative;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .gallery-carousel {
-            display: flex;
-            transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
-            will-change: transform;
-        }
-
-        .gallery-slide {
-            min-width: 33.333%;
-            padding: 0 15px;
-            transition: all 0.6s ease;
-            transform: scale(0.9);
-            opacity: 0.7;
-            filter: brightness(0.8);
-        }
-
-        .gallery-slide.active {
-            transform: scale(1);
-            opacity: 1;
-            filter: brightness(1);
-        }
-
-        .gallery-item {
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            aspect-ratio: 1/1;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            transition: all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .gallery-item::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .gallery-item:hover::after {
-            opacity: 1;
-        }
-
-        .gallery-item-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px;
-            color: white;
-            z-index: 2;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.4s ease;
-        }
-
-        .gallery-item:hover .gallery-item-caption {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .gallery-item-caption h3 {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .gallery-item-caption p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            font-weight: 300;
-        }
-
-        .gallery-controls {
-            display: flex;
-            justify-content: center;
-            margin-top: 40px;
-            gap: 20px;
-        }
-
-        .gallery-prev,
-        .gallery-next {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .gallery-prev:hover,
-        .gallery-next:hover {
-            background-color: var(--accent-color);
-            transform: scale(1.1);
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--primary-color);
-            color: var(--secondary-color);
-            padding: 80px 20px 30px;
-            text-align: center;
-            position: relative;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-content p {
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            font-weight: 300;
-            opacity: 0.8;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-links a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-            font-weight: 300;
-            position: relative;
-        }
-
-        .footer-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background-color: var(--accent-color);
-            transition: width 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-color);
-        }
-
-        .footer-links a:hover::after {
-            width: 100%;
-        }
-
-        .footer-social {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .footer-social a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .footer-social a:hover {
-            background-color: var(--accent-color);
-            transform: translateY(-5px);
-        }
-
-        .copyright {
-            font-size: 0.9rem;
-            opacity: 0.6;
-            font-weight: 300;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background-color: var(--accent-color);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 999;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
-        }
-
-        @keyframes rotate {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Intersection Observer Animations */
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        .animate-on-scroll.animated {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 1024px) {
-            :root {
-                --section-padding: 80px;
-            }
-
-            .section-title {
-                font-size: 3rem;
-            }
-
-            .about-text p {
-                font-size: 1.2rem;
-            }
-
-            .gallery-slide {
-                min-width: 50%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --section-padding: 60px;
-            }
-
-            .hero {
-                height: 90vh;
-            }
-
-            .carousel-control {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-
-            .carousel-indicators {
-                bottom: 20px;
-            }
-
-            .section-title {
-                font-size: 2.5rem;
-            }
-
-            .about-content {
-                flex-direction: column;
-            }
-
-            .about-image {
-                max-width: 100%;
-            }
-
-            .gallery-slide {
-                min-width: 100%;
-            }
-
-            .footer-links {
-                gap: 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            :root {
-                --section-padding: 50px;
-            }
-
-            nav a {
-                font-size: 22px;
-            }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            .hero .btn {
-                padding: 10px 25px;
-                font-size: 1rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .about-text p {
-                font-size: 1rem;
-                padding-left: 20px;
-            }
-
-            .about-text p::before {
-                font-size: 1rem;
-            }
-
-            .gallery-controls {
-                margin-top: 30px;
-            }
-
-            .gallery-prev,
-            .gallery-next {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-
-            .footer-links {
-                gap: 15px;
-                flex-direction: column;
-            }
-
-            .footer-links a {
-                font-size: 1rem;
-            }
-
-            .footer-social {
-                gap: 15px;
-            }
-
-            .footer-social a {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-
-            .back-to-top {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-                bottom: 20px;
-                right: 20px;
-            }
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .gsap-hidden { opacity: 0; visibility: hidden; }
     </style>
 </head>
 
-<body>
-    <header>
-        <a href="#" class="logo">Magician Sajan</a>
+<body class="selection:bg-gold selection:text-black">
 
-        <!-- Added Social Icons in Header -->
-        <div class="header-social">
-            <a href="https://wa.me/919387614714" target="_blank" aria-label="WhatsApp">
-                <i class="fab fa-whatsapp"></i>
-            </a>
-            <a href="https://www.facebook.com/sajan.nanniode/?_rdr" target="_blank" aria-label="Facebook">
-                <i class="fab fa-facebook-f"></i>
+    <!-- 3D Three.js Interactive WebGL Background Canvas -->
+    <div id="threeJsCanvasContainer" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-45 dark:opacity-60 mix-blend-screen transition-opacity duration-1000"></div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/919387614714" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Magician Sajan"
+        class="whatsapp-float-btn fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#25D366] text-white text-2xl md:text-3xl shadow-2xl hover:scale-110 active:scale-95 transition-transform duration-300">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Apple-Style Ultra-Thin Sticky Navbar -->
+    <header class="apple-nav fixed top-0 left-0 w-full z-40 transition-all duration-300" id="mainHeader">
+        <div class="max-w-6xl mx-auto px-5 h-14 md:h-16 flex items-center justify-between">
+            <!-- Brand -->
+            <a href="#home" class="flex items-center gap-2.5 text-sm md:text-base font-bold tracking-tight text-[var(--text-primary)] hover:opacity-80 transition-opacity">
+                <span class="w-7 h-7 rounded-full bg-gradient-to-tr from-gold to-yellow-200 flex items-center justify-center text-black text-[10px] shadow-md shadow-gold/30">
+                    <i class="fas fa-hat-wizard"></i>
+                </span>
+                <span>Magician Sajan</span>
             </a>
 
-            <a href="https://www.instagram.com/magician__sajan/?hl=en" target="_blank" aria-label="Instagram">
-                <i class="fab fa-instagram"></i>
-            </a>
+            <!-- Desktop Links -->
+            <nav class="hidden md:flex items-center gap-8 text-[12px] font-semibold tracking-wide text-[var(--text-secondary)]">
+                <a href="#home" data-i18n="nav_home" class="hover:text-[var(--text-primary)] transition-colors">Home</a>
+                <a href="#about" data-i18n="nav_about" class="hover:text-[var(--text-primary)] transition-colors">Overview</a>
+                <a href="#media" data-i18n="nav_media" class="hover:text-[var(--text-primary)] transition-colors">Showcase</a>
+                <a href="#packages" data-i18n="nav_packages" class="hover:text-[var(--text-primary)] transition-colors">Shows</a>
+                <a href="#contact" data-i18n="nav_contact" class="hover:text-[var(--text-primary)] transition-colors">Bookings</a>
+            </nav>
 
+            <!-- Action Cluster -->
+            <div class="flex items-center gap-2">
+                <!-- Language Toggle -->
+                <button id="langToggleBtn" class="h-8 px-3 rounded-full border border-[var(--border-glass)] text-[11px] font-semibold hover:border-gold transition-colors flex items-center gap-1.5" title="Switch English / Malayalam">
+                    <i class="fas fa-globe text-gold text-xs"></i>
+                    <span id="langLabel">മലയാളം</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button id="themeToggleBtn" class="w-8 h-8 rounded-full border border-[var(--border-glass)] flex items-center justify-center text-xs hover:border-gold transition-colors" title="Toggle Light/Dark Theme">
+                    <i class="fas fa-sun hidden dark:inline text-gold"></i>
+                    <i class="fas fa-moon inline dark:hidden text-slate-700"></i>
+                </button>
+
+                <!-- Google Business Profile Action Button -->
+                <a href="https://share.google/Vb6fmC5okCD2XMjJn" target="_blank" class="hidden sm:inline-flex items-center px-4 py-1.5 rounded-full bg-white text-black font-bold text-[11px] uppercase tracking-wider hover:opacity-90 transition-opacity hover:scale-105 border border-gray-200">
+                    <i class="fab fa-google text-[#4285F4] mr-1.5 text-xs"></i>
+                    <span data-i18n="btn_google">Google Profile</span>
+                </a>
+
+                <!-- Mobile Hamburger Toggle -->
+                <button id="mobileMenuBtn" class="md:hidden w-8 h-8 rounded-full border border-[var(--border-glass)] flex items-center justify-center text-xs text-[var(--text-primary)]" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
 
-        <input type="checkbox" id="nav-toggle" class="nav-toggle">
-        <label for="nav-toggle" class="nav-toggle-label">
-            <i class="fas fa-bars"></i>
-        </label>
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#gallery">Gallery</a>
-            <a href="#contact">Contact</a>
-        </nav>
+        <!-- Mobile Drawer -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-[var(--border-glass)] px-6 py-6 flex-col gap-4 text-sm font-medium bg-[var(--nav-bg)] backdrop-blur-2xl">
+            <a href="#home" data-i18n="nav_home" class="py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Home</a>
+            <a href="#about" data-i18n="nav_about" class="py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Overview</a>
+            <a href="#media" data-i18n="nav_media" class="py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Showcase</a>
+            <a href="#packages" data-i18n="nav_packages" class="py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Shows</a>
+            <a href="#contact" data-i18n="nav_contact" class="py-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Bookings</a>
+            <a href="https://share.google/Vb6fmC5okCD2XMjJn" target="_blank" class="w-full py-2.5 rounded-full bg-white text-black text-center font-bold text-xs uppercase tracking-wider mt-2 flex justify-center items-center border border-gray-200">
+                <i class="fab fa-google text-[#4285F4] mr-2"></i> <span data-i18n="btn_google">Google Profile</span>
+            </a>
+        </div>
     </header>
 
+    <!-- Hero Section (Apple Product Atmosphere with Direct Video File) -->
+    <section id="home" class="relative min-h-[100vh] flex items-center justify-center overflow-hidden pt-20 px-6 bg-black">
+        <!-- Background Ambient Video Player -->
+        <div class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <!-- Native HTML5 Video for High Performance -->
+            <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-45 dark:opacity-35 scale-105 transition-opacity duration-700">
+                <source src="https://www.image2url.com/r2/default/videos/1790162941470-f4148400-3560-4b7a-82f2-826a36481dc1.mp4" type="video/mp4">
+            </video>
+            <!-- Contrast Vignette Gradients -->
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--bg-body)]/65 to-[var(--bg-body)] pointer-events-none"></div>
+        </div>
 
-    <section class="hero" id="home">
-        <div class="hero-carousel">
-            <!-- Slide 1 -->
-            <div class="hero-slide active" style="background-image: url('images/sajan\ 2.jpg')">
-                <div class="hero-content">
-                    <h1>Experience the Magic</h1>
-                    <p>Creating unforgettable moments with world-class magical performances tailored for your special
-                        events.</p>
-                    <a href="tel:+919387614714">
-                        <button class="btn">Contact</button>
-                    </a>
-                </div>
+        <!-- Hero Content Center -->
+        <div class="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center mt-8">
+            <!-- Eyebrow Badge -->
+            <div class="gsap-hero-elem inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[var(--border-glass)] apple-glass text-[11px] font-bold tracking-wider uppercase mb-5 text-gold">
+                <span class="w-1.5 h-1.5 rounded-full bg-gold animate-ping"></span>
+                <span data-i18n="hero_pill">16+ Years Stage Excellence</span>
             </div>
 
-            <!-- Slide 2 -->
-            <div class="hero-slide" style="background-image: url('images/sajan1.jpg')">
-                <div class="hero-content">
-                    <h1>Magical Performances</h1>
-                    <p>Breathtaking illusions that will leave your audience amazed and wanting more.</p>
-                    <a href="#gallery">
-                        <button class="btn">View Gallery</button>
-                    </a>
-                </div>
+            <!-- Main Super-Headline -->
+            <h1 class="gsap-hero-elem text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.05] mb-5 apple-title-gradient">
+                <span data-i18n="hero_title_1">Magician Sajan.</span><br>
+                <span class="gold-gradient-text" data-i18n="hero_title_2">Pure Impossible.</span>
+            </h1>
+
+            <!-- Supporting Paragraph -->
+            <p class="gsap-hero-elem max-w-xl text-base sm:text-lg md:text-xl text-[var(--text-secondary)] font-medium leading-relaxed mb-8" data-i18n="hero_desc">
+                From auditorium grand illusions to high-touch psychological mentalism for India’s finest galas, weddings, and corporate summits.
+            </p>
+
+            <!-- Apple Pill CTA Buttons -->
+            <div class="gsap-hero-elem flex flex-wrap items-center justify-center gap-4">
+                <a href="#contact" class="px-8 py-3.5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs sm:text-sm font-semibold tracking-wide transition-all shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95">
+                    <span data-i18n="btn_book_now">Book Performance</span>
+                </a>
+                <a href="https://wa.me/919387614714" target="_blank" class="px-8 py-3.5 rounded-full apple-glass border border-[var(--border-glass)] hover:border-gold text-xs sm:text-sm font-semibold tracking-wide transition-all flex items-center gap-2 hover:scale-105 active:scale-95 text-[var(--text-primary)]">
+                    <i class="fab fa-whatsapp text-emerald-500 text-base"></i>
+                    <span data-i18n="btn_quick_wa">WhatsApp Now</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seamless Logo Marquee Section -->
+    <section class="py-8 border-y border-[var(--border-glass)] relative z-10 apple-glass overflow-hidden">
+        <div class="marquee-wrapper">
+            <div class="marquee-content">
+                <!-- Group 1 -->
+                <div class="marquee-logo"><i class="fas fa-building text-gold mr-2"></i> Corporate Summits</div>
+                <div class="marquee-logo"><i class="fas fa-gem text-gold mr-2"></i> Royal Weddings</div>
+                <div class="marquee-logo"><i class="fas fa-tv text-gold mr-2"></i> TV Appearances</div>
+                <div class="marquee-logo"><i class="fas fa-award text-gold mr-2"></i> Award Galas</div>
+                <div class="marquee-logo"><i class="fas fa-star text-gold mr-2"></i> Celebrity Events</div>
+                <div class="marquee-logo"><i class="fas fa-university text-gold mr-2"></i> College Fests</div>
+                <!-- Group 2 (Duplicate for seamless loop) -->
+                <div class="marquee-logo"><i class="fas fa-building text-gold mr-2"></i> Corporate Summits</div>
+                <div class="marquee-logo"><i class="fas fa-gem text-gold mr-2"></i> Royal Weddings</div>
+                <div class="marquee-logo"><i class="fas fa-tv text-gold mr-2"></i> TV Appearances</div>
+                <div class="marquee-logo"><i class="fas fa-award text-gold mr-2"></i> Award Galas</div>
+                <div class="marquee-logo"><i class="fas fa-star text-gold mr-2"></i> Celebrity Events</div>
+                <div class="marquee-logo"><i class="fas fa-university text-gold mr-2"></i> College Fests</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Metrics Strip -->
+    <section class="py-14 relative z-10">
+        <div class="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center gsap-stagger-container">
+            <div class="gsap-stagger-item">
+                <div class="text-3xl sm:text-5xl font-extrabold tracking-tight gold-gradient-text">16+</div>
+                <div class="text-[11px] sm:text-xs text-[var(--text-secondary)] uppercase tracking-wider font-bold mt-2" data-i18n="stat_years">Years Active</div>
+            </div>
+            <div class="gsap-stagger-item">
+                <div class="text-3xl sm:text-5xl font-extrabold tracking-tight gold-gradient-text">1,500+</div>
+                <div class="text-[11px] sm:text-xs text-[var(--text-secondary)] uppercase tracking-wider font-bold mt-2" data-i18n="stat_shows">Shows Delivered</div>
+            </div>
+            <div class="gsap-stagger-item">
+                <div class="text-3xl sm:text-5xl font-extrabold tracking-tight gold-gradient-text">100k+</div>
+                <div class="text-[11px] sm:text-xs text-[var(--text-secondary)] uppercase tracking-wider font-bold mt-2" data-i18n="stat_faces">Audience Members</div>
+            </div>
+            <div class="gsap-stagger-item">
+                <div class="text-3xl sm:text-5xl font-extrabold tracking-tight gold-gradient-text">100%</div>
+                <div class="text-[11px] sm:text-xs text-[var(--text-secondary)] uppercase tracking-wider font-bold mt-2" data-i18n="stat_satisfaction">Delight Rating</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Media Showcase with 3D Tilt Carousel -->
+    <section id="media" class="py-24 px-5 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header -->
+            <div class="text-center max-w-xl mx-auto mb-14 gsap-fade-up">
+                <span class="text-xs uppercase tracking-widest text-gold font-bold mb-2 block" data-i18n="carousel_tag">Visual Chronicle</span>
+                <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight apple-title-gradient" data-i18n="carousel_heading">Stage & Media Showcase</h2>
+                <p class="text-sm sm:text-base text-[var(--text-secondary)] mt-4 font-medium" data-i18n="carousel_sub">
+                    Explore high-resolution captures and live theatrical performance teasers.
+                </p>
             </div>
 
-            <!-- Slide 3 -->
-            <div class="hero-slide" style="background-image: url('images/sajan3.jpg')">
-                <div class="hero-content">
-                    <h1>Customized Shows</h1>
-                    <p>Tailored magic experiences designed specifically for your event's theme and audience.</p>
-                    <a href="#gallery">
-                        <button class="btn">View Gallery</button>
-                    </a>
+            <!-- Main Interactive Carousel Display Card -->
+            <div class="gsap-scale-up relative w-full rounded-3xl overflow-hidden apple-glass p-3 sm:p-5 border border-[var(--border-glass)]" data-tilt data-tilt-max="2" data-tilt-perspective="1500" data-tilt-speed="400">
+                <div class="relative w-full h-[380px] sm:h-[480px] md:h-[600px] rounded-2xl overflow-hidden bg-black flex items-center justify-center">
+
+                    <div class="w-full h-full relative">
+                        <img id="carouselImg" src="images/sajan 2.jpg" alt="Magician Sajan" class="w-full h-full object-cover object-center transition-all duration-700 ease-out">
+                        <video id="carouselVideo" playsinline loop muted class="w-full h-full object-cover hidden">
+                            <source src="" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none"></div>
+
+                    <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between z-10">
+                        <div class="max-w-lg">
+                            <span id="slideTypeBadge" class="px-3 py-1 rounded-full bg-gold text-black text-[10px] font-bold uppercase tracking-wider mb-3 inline-block">Image</span>
+                            <h3 id="slideTitle" class="text-xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">The Symphony of Wonder</h3>
+                            <p id="slideDesc" class="text-sm sm:text-base text-slate-300 mt-2 font-medium line-clamp-2">Auditorium grand opening acts and illusions that captivate audiences.</p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button id="mediaPrevBtn" class="w-12 h-12 rounded-full apple-glass flex items-center justify-center text-white hover:bg-gold hover:text-black transition-all" aria-label="Previous Slide">
+                                <i class="fas fa-chevron-left text-sm"></i>
+                            </button>
+                            <button id="mediaNextBtn" class="w-12 h-12 rounded-full apple-glass flex items-center justify-center text-white hover:bg-gold hover:text-black transition-all" aria-label="Next Slide">
+                                <i class="fas fa-chevron-right text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Carousel Dot Track Indicators -->
+                <div id="carouselDots" class="flex items-center justify-center gap-2.5 pt-5 pb-1"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section with Apple Bento-Grid Cards -->
+    <section id="about" class="py-20 px-5 relative z-10 border-t border-[var(--border-glass)]">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-xl mx-auto mb-16 gsap-fade-up">
+                <span class="text-xs uppercase tracking-widest text-gold font-bold mb-2 block" data-i18n="about_tag">The Philosophy</span>
+                <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight apple-title-gradient" data-i18n="about_heading">Crafting The Impossible</h2>
             </div>
 
-            <!-- Slide 4 -->
-            <div class="hero-slide" style="background-image: url('images/sajan4.jpg')">
-                <div class="hero-content">
-                    <h1>Unforgettable Memories</h1>
-                    <p>Creating moments that your guests will talk about long after the event is over.</p>
-                    <a href="#gallery">
-                        <button class="btn">View Gallery</button>
+            <!-- Bento Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 gsap-stagger-container">
+                <!-- Left Tall Image Box -->
+                <div class="md:col-span-5 rounded-3xl apple-glass p-3 overflow-hidden group gsap-stagger-item" data-tilt data-tilt-max="3" data-tilt-speed="400">
+                    <div class="w-full h-80 sm:h-[480px] rounded-2xl overflow-hidden relative">
+                        <img src="images/sajanpeacock.jpg" alt="Sajan Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <span class="text-[10px] text-gold uppercase font-bold tracking-widest" data-i18n="about_role">Professional Illusionist & Mentalist</span>
+                            <h3 class="text-3xl font-extrabold text-white tracking-tight mt-1">Magician Sajan</h3>
+                            <p class="text-xs font-medium text-slate-300 mt-2 flex items-center gap-2" data-i18n="about_origin">
+                                <i class="fas fa-map-marker-alt text-gold"></i> Nanniode, Palakkad • Nationwide
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Narrative Stack -->
+                <div class="md:col-span-7 flex flex-col gap-6">
+                    <div class="rounded-3xl apple-glass p-8 sm:p-12 flex-1 flex flex-col justify-center gsap-stagger-item">
+                        <h4 class="text-2xl font-extrabold mb-4 tracking-tight gold-gradient-text" data-i18n="story_title">16 Years of Unmatched Stage Craft</h4>
+                        <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed mb-5 font-medium" data-i18n="story_p1">
+                            With over 16 years of dedicated performance across India, Sajan redefines modern magic by weaving theatrical grandeur with spontaneous crowd engagement.
+                        </p>
+                        <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed font-medium" data-i18n="story_p2">
+                            His repertoire merges sleight-of-hand mastery, impossible psychological thought-reading, and scale illusions tailored for international corporate conclaves, grand destination weddings, and festive galas.
+                        </p>
+                    </div>
+
+                    <!-- 3 Horizontal Chips -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="rounded-2xl apple-glass p-6 text-center hover:border-gold transition-colors gsap-stagger-item" data-tilt data-tilt-max="10">
+                            <i class="fas fa-brain text-gold text-2xl mb-3"></i>
+                            <h5 class="text-xs font-extrabold uppercase tracking-wider text-[var(--text-primary)]" data-i18n="feat_1">Mentalism</h5>
+                            <p class="text-[11px] text-[var(--text-secondary)] mt-1.5 font-medium" data-i18n="feat_1_sub">Mind Reading Feats</p>
+                        </div>
+                        <div class="rounded-2xl apple-glass p-6 text-center hover:border-gold transition-colors gsap-stagger-item" data-tilt data-tilt-max="10">
+                            <i class="fas fa-hand-sparkles text-gold text-2xl mb-3"></i>
+                            <h5 class="text-xs font-extrabold uppercase tracking-wider text-[var(--text-primary)]" data-i18n="feat_2">Close-Up</h5>
+                            <p class="text-[11px] text-[var(--text-secondary)] mt-1.5 font-medium" data-i18n="feat_2_sub">Inches From Eyes</p>
+                        </div>
+                        <div class="rounded-2xl apple-glass p-6 text-center hover:border-gold transition-colors gsap-stagger-item" data-tilt data-tilt-max="10">
+                            <i class="fas fa-theater-masks text-gold text-2xl mb-3"></i>
+                            <h5 class="text-xs font-extrabold uppercase tracking-wider text-[var(--text-primary)]" data-i18n="feat_3">Grand Stage</h5>
+                            <p class="text-[11px] text-[var(--text-secondary)] mt-1.5 font-medium" data-i18n="feat_3_sub">Spectacles for 1000s</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Show Packages Section -->
+    <section id="packages" class="py-24 px-5 relative z-10 border-t border-[var(--border-glass)]">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-xl mx-auto mb-16 gsap-fade-up">
+                <span class="text-xs uppercase tracking-widest text-gold font-bold mb-2 block" data-i18n="packages_tag">Custom Experiences</span>
+                <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight apple-title-gradient" data-i18n="packages_heading">Tailored Show Packages</h2>
+                <p class="text-sm sm:text-base text-[var(--text-secondary)] mt-4 font-medium" data-i18n="packages_sub">
+                    Specially engineered formats designed to blend seamlessly with your itinerary.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 gsap-stagger-container">
+                <!-- Package 1: Corporate -->
+                <div class="rounded-3xl apple-glass p-8 flex flex-col justify-between hover:border-gold transition-all duration-300 gsap-stagger-item" data-tilt data-tilt-max="4">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-gold/10 text-gold flex items-center justify-center text-2xl mb-6">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gold uppercase tracking-widest" data-i18n="pkg1_tag">Corporate Gala</span>
+                        <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg1_title">The Executive Keynote</h3>
+                        <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 font-medium" data-i18n="pkg1_desc">
+                            Transform corporate annual summits, awards banquets, and product launches with customized magical reveals integrated with brand values.
+                        </p>
+                        <ul class="text-xs font-semibold text-[var(--text-secondary)] space-y-3 mb-8">
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f1">Customized Product Reveals</span></li>
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f2">Leadership Mind-Reading</span></li>
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f3">High-Impact Theatrical Staging</span></li>
+                        </ul>
+                    </div>
+                    <a href="#contact" class="w-full py-3.5 rounded-full border border-[var(--border-glass)] hover:border-gold hover:bg-gold hover:text-black text-center text-xs font-bold uppercase tracking-wider transition-all" data-i18n="btn_inquire_pkg">
+                        Inquire Package
+                    </a>
+                </div>
+
+                <!-- Package 2: Weddings & Luxury Galas (Featured) -->
+                <div class="rounded-3xl apple-glass p-8 flex flex-col justify-between border-gold/40 relative shadow-2xl bg-gradient-to-b from-gold/5 to-transparent gsap-stagger-item transform md:-translate-y-4" data-tilt data-tilt-max="4">
+                    <span class="absolute -top-3 right-8 px-4 py-1.5 rounded-full bg-gold text-black text-[10px] font-extrabold uppercase tracking-widest shadow-lg">Most Popular</span>
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-gold text-black flex items-center justify-center text-2xl mb-6 shadow-lg shadow-gold/20">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gold uppercase tracking-widest" data-i18n="pkg2_tag">Weddings & Sangeet</span>
+                        <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg2_title">Royal Wedding Enchantment</h3>
+                        <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 font-medium" data-i18n="pkg2_desc">
+                            Mesmerize high-profile wedding guests with interactive walkaround table magic during cocktails, followed by a romantic stage climax.
+                        </p>
+                        <ul class="text-xs font-semibold text-[var(--text-secondary)] space-y-3 mb-8">
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f1">Cocktail Hour Walkaround Sleights</span></li>
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f2">Bride & Groom Special Illusion</span></li>
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f3">Table-to-Table Interactive Marvels</span></li>
+                        </ul>
+                    </div>
+                    <a href="#contact" class="w-full py-3.5 rounded-full bg-gold hover:bg-gold-light text-black text-center text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-gold/25" data-i18n="btn_inquire_pkg">
+                        Inquire Package
+                    </a>
+                </div>
+
+                <!-- Package 3: Auditorium Mega Shows -->
+                <div class="rounded-3xl apple-glass p-8 flex flex-col justify-between hover:border-gold transition-all duration-300 gsap-stagger-item" data-tilt data-tilt-max="4">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-gold/10 text-gold flex items-center justify-center text-2xl mb-6">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gold uppercase tracking-widest" data-i18n="pkg3_tag">Mega Auditorium</span>
+                        <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg3_title">The Grand Spectacle</h3>
+                        <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 font-medium" data-i18n="pkg3_desc">
+                            Full-scale stage magic featuring breathtaking levitations, instant teleportations, escapology, and theatrical wonder for large audiences.
+                        </p>
+                        <ul class="text-xs font-semibold text-[var(--text-secondary)] space-y-3 mb-8">
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f1">Levitation & Teleportation Staging</span></li>
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f2">Mega Escapology & Suspense Feats</span></li>
+                            <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f3">Professional Sound & Lighting Sync</span></li>
+                        </ul>
+                    </div>
+                    <a href="#contact" class="w-full py-3.5 rounded-full border border-[var(--border-glass)] hover:border-gold hover:bg-gold hover:text-black text-center text-xs font-bold uppercase tracking-wider transition-all" data-i18n="btn_inquire_pkg">
+                        Inquire Package
                     </a>
                 </div>
             </div>
         </div>
-
-        <!-- Carousel Controls -->
-        <button class="carousel-control prev" aria-label="Previous slide">‹</button>
-        <button class="carousel-control next" aria-label="Next slide">›</button>
-
-        <!-- Carousel Indicators -->
-        <div class="carousel-indicators"></div>
     </section>
 
-    <section class="about" id="about">
-        <div class="section-container">
-            <h2 class="section-title animate-on-scroll">ABOUT MAGICIAN SAJAN</h2>
-            <div class="about-content">
-                <div class="about-text animate-on-scroll">
-                    <p>With over 16 years of experience in the art of magic, Sajan has captivated audiences across India
-                        with his unique blend of traditional and contemporary magic.</p>
-                    <p>His performances combine sleight of hand, mind reading, and grand illusions to create a truly
-                        mesmerizing experience that leaves audiences in awe.</p>
-                    <p>From corporate events to private parties, Sajan tailors each performance to create a magical
-                        atmosphere that perfectly complements your occasion.</p>
-                    <p>What sets Sajan apart is his ability to connect with audiences of all ages, creating a
-                        personalized experience that makes every spectator feel like part of the show.</p>
+    <!-- Location Section (Nanniode, Palakkad) -->
+    <section id="location" class="py-24 px-5 relative z-10 border-t border-[var(--border-glass)]">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Visual Location Card -->
+                <div class="md:col-span-6 gsap-fade-up">
+                    <div class="rounded-3xl apple-glass p-8 border border-[var(--border-glass)] relative overflow-hidden" data-tilt data-tilt-max="3">
+                        <div class="absolute -top-32 -left-32 w-64 h-64 bg-gold/10 rounded-full blur-3xl pointer-events-none"></div>
+                        
+                        <div class="flex items-center justify-between border-b border-[var(--border-glass)] pb-5 mb-6">
+                            <div>
+                                <h3 class="text-xl font-extrabold tracking-tight text-[var(--text-primary)]" data-i18n="hub_card_title">Performance Operations</h3>
+                                <p class="text-xs text-[var(--text-secondary)] font-medium mt-1" data-i18n="hub_card_sub">Kerala • Tamil Nadu • Pan India</p>
+                            </div>
+                            <span class="px-3 py-1.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span data-i18n="status_active">Booking Active</span>
+                            </span>
+                        </div>
 
-                    <div class="social-icons">
-                        <a href="https://wa.me/919387614714" class="social-icon whatsapp" target="_blank"
-                            aria-label="WhatsApp">
+                        <!-- Hub List -->
+                        <div class="space-y-4 text-xs font-medium">
+                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-[var(--surface-solid)]/40 border border-[var(--border-glass)]">
+                                <i class="fas fa-map-marker-alt text-gold text-lg mt-0.5"></i>
+                                <div>
+                                    <strong class="font-extrabold text-sm text-[var(--text-primary)]" data-i18n="hub1_t">Kerala Base Operations</strong>
+                                    <p class="text-[var(--text-secondary)] mt-1 leading-relaxed" data-i18n="hub1_d">Based in Nanniode, Palakkad. Direct servicing to Kochi, Kozhikode, Thrissur, Trivandrum & statewide.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-[var(--surface-solid)]/40 border border-[var(--border-glass)]">
+                                <i class="fas fa-car text-gold text-lg mt-0.5"></i>
+                                <div>
+                                    <strong class="font-extrabold text-sm text-[var(--text-primary)]" data-i18n="hub2_t">South India Regional Shows</strong>
+                                    <p class="text-[var(--text-secondary)] mt-1 leading-relaxed" data-i18n="hub2_d">Extensive coverage across Coimbatore, Bengaluru, Chennai, and Hyderabad luxury destinations.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-2xl bg-[var(--surface-solid)]/40 border border-[var(--border-glass)]">
+                                <i class="fas fa-plane text-gold text-lg mt-0.5"></i>
+                                <div>
+                                    <strong class="font-extrabold text-sm text-[var(--text-primary)]" data-i18n="hub3_t">Bespoke Destination Events</strong>
+                                    <p class="text-[var(--text-secondary)] mt-1 leading-relaxed" data-i18n="hub3_d">All-India flight-accessible venues for multi-day corporate conventions & destination weddings.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Information Column -->
+                <div class="md:col-span-6 space-y-6 gsap-fade-up">
+                    <span class="text-xs uppercase tracking-widest text-gold font-bold block" data-i18n="loc_tag">Headquarters & Availability</span>
+                    <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight apple-title-gradient leading-[1.1]" data-i18n="loc_heading">
+                        Rooted in Kerala.<br>Performing Everywhere.
+                    </h2>
+                    <p class="text-base text-[var(--text-secondary)] leading-relaxed font-medium" data-i18n="loc_desc">
+                        Magician Sajan is proudly based out of Nanniode, Palakkad, frequently headlining prominent stage shows, resort galas, destination weddings, and corporate summits across India.
+                    </p>
+
+                    <!-- Quick Contact Buttons -->
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="https://share.google/Vb6fmC5okCD2XMjJn" target="_blank" class="px-7 py-3.5 rounded-full bg-white text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg shadow-white/10 hover:scale-105 border border-gray-200">
+                            <i class="fab fa-google text-[#4285F4] text-sm"></i>
+                            <span data-i18n="btn_google">Google Profile</span>
+                        </a>
+                        <a href="https://wa.me/919387614714" target="_blank" class="px-7 py-3.5 rounded-full apple-glass border border-[var(--border-glass)] hover:border-gold text-[var(--text-primary)] text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 hover:scale-105">
+                            <i class="fab fa-whatsapp text-emerald-500 text-lg"></i>
+                            <span data-i18n="btn_quick_wa">WhatsApp Direct</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Apple-Style Form Section -->
+    <section id="contact" class="py-24 px-5 relative z-10 border-t border-[var(--border-glass)]">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center max-w-xl mx-auto mb-14 gsap-fade-up">
+                <span class="text-xs uppercase tracking-widest text-gold font-bold mb-2 block" data-i18n="form_tag">Event Inquiries</span>
+                <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight apple-title-gradient" data-i18n="form_heading">Reserve Your Date</h2>
+                <p class="text-sm sm:text-base text-[var(--text-secondary)] mt-4 font-medium" data-i18n="form_sub">
+                    Fill out the event details below to initiate instant booking on WhatsApp.
+                </p>
+            </div>
+
+            <!-- Booking Form -->
+            <div class="rounded-3xl apple-glass p-8 sm:p-12 border border-[var(--border-glass)] shadow-2xl gsap-scale-up" data-tilt data-tilt-max="1" data-tilt-glare="true" data-tilt-max-glare="0.1">
+                <form id="bookingForm" class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-bold text-[var(--text-secondary)] mb-2" data-i18n="label_name">Your Name *</label>
+                            <input type="text" id="custName" required placeholder="e.g. Rahul Sharma" class="w-full px-5 py-4 rounded-xl apple-input text-sm font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-bold text-[var(--text-secondary)] mb-2" data-i18n="label_phone">Phone / WhatsApp Number *</label>
+                            <input type="tel" id="custPhone" required placeholder="e.g. +91 98765 43210" class="w-full px-5 py-4 rounded-xl apple-input text-sm font-medium">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-bold text-[var(--text-secondary)] mb-2" data-i18n="label_event_type">Event Category *</label>
+                            <select id="eventType" class="w-full px-5 py-4 rounded-xl apple-input text-sm font-medium appearance-none">
+                                <option value="Corporate Event">Corporate Summit / Gala</option>
+                                <option value="Wedding / Sangeet">Royal Wedding / Sangeet</option>
+                                <option value="Private VIP Party">Private VIP Gathering</option>
+                                <option value="College / Public Festival">Festival / Mega Event</option>
+                                <option value="Other Inquiries">Other Inquiries</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-bold text-[var(--text-secondary)] mb-2" data-i18n="label_date">Target Date & Location *</label>
+                            <input type="text" id="eventDateLoc" required placeholder="e.g. 25 Oct, Kochi / Palakkad" class="w-full px-5 py-4 rounded-xl apple-input text-sm font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider font-bold text-[var(--text-secondary)] mb-2" data-i18n="label_notes">Show Requirements / Special Requests</label>
+                        <textarea id="eventNotes" rows="3" placeholder="Tell us about the audience size, venue, or expected schedule..." class="w-full px-5 py-4 rounded-xl apple-input text-sm font-medium"></textarea>
+                    </div>
+
+                    <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-6">
+                        <div class="flex items-center gap-2.5 text-[11px] font-semibold text-[var(--text-secondary)]">
+                            <i class="fas fa-lock text-gold text-sm"></i>
+                            <span data-i18n="privacy_note">Direct instant dispatch to Magician Sajan's WhatsApp</span>
+                        </div>
+
+                        <button type="submit" class="w-full sm:w-auto px-8 py-4 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs tracking-wider uppercase shadow-xl shadow-green-500/20 hover:scale-105 transition-all flex items-center justify-center gap-2">
+                            <i class="fab fa-whatsapp text-xl"></i>
+                            <span data-i18n="btn_send_whatsapp">Send Booking to WhatsApp</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fully Restructured Footer Layout -->
+    <footer class="py-16 px-5 border-t border-[var(--border-glass)] relative z-10 bg-[#000000]">
+        <div class="max-w-6xl mx-auto">
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-[#2A2A2A]">
+                
+                <!-- Column 1: Brand Info -->
+                <div class="space-y-5">
+                    <a href="#home" class="flex items-center gap-2.5 text-base font-bold tracking-tight text-white">
+                        <span class="w-8 h-8 rounded-full bg-gold text-black flex items-center justify-center text-xs">
+                            <i class="fas fa-hat-wizard"></i>
+                        </span>
+                        <span>Magician Sajan</span>
+                    </a>
+                    <p class="text-[13px] leading-relaxed font-medium text-gray-400" data-i18n="footer_brand_desc">
+                        Creating unforgettable, mind-defying illusions and psychological mentalism for corporate summits, luxury weddings, and stage spectacles across India.
+                    </p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="https://share.google/Vb6fmC5okCD2XMjJn" target="_blank" class="w-9 h-9 rounded-full border border-gray-800 bg-transparent flex items-center justify-center text-gray-400 hover:text-white transition-colors" aria-label="Google Profile">
+                            <i class="fab fa-google"></i>
+                        </a>
+                        <a href="https://wa.me/919387614714" target="_blank" class="w-9 h-9 rounded-full border border-gray-800 bg-transparent flex items-center justify-center text-gray-400 hover:text-[#25D366] transition-colors" aria-label="WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <a href="https://www.facebook.com/sajan.nanniode/?_rdr" class="social-icon facebook" target="_blank"
-                            aria-label="Facebook">
+                        <a href="https://www.facebook.com/sajan.nanniode/?_rdr" target="_blank" class="w-9 h-9 rounded-full border border-gray-800 bg-transparent flex items-center justify-center text-gray-400 hover:text-[#1877F2] transition-colors" aria-label="Facebook">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="https://www.instagram.com/magician__sajan/?hl=en" class="social-icon instagram" target="_blank"
-                            aria-label="Instagram">
+                        <a href="https://www.instagram.com/magician__sajan/?hl=en" target="_blank" class="w-9 h-9 rounded-full border border-gray-800 bg-transparent flex items-center justify-center text-gray-400 hover:text-[#E4405F] transition-colors" aria-label="Instagram">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </div>
+                </div>
 
+                <!-- Column 2: Navigation Links -->
+                <div class="space-y-4 md:pl-8">
+                    <h4 class="text-[11px] font-extrabold uppercase tracking-widest text-white" data-i18n="footer_col_nav">Navigation</h4>
+                    <ul class="space-y-3 font-semibold text-[13px] text-gray-400">
+                        <li><a href="#home" class="hover:text-gold transition-colors" data-i18n="nav_home">Home</a></li>
+                        <li><a href="#about" class="hover:text-gold transition-colors" data-i18n="nav_about">About</a></li>
+                        <li><a href="#media" class="hover:text-gold transition-colors" data-i18n="nav_media">Showcase</a></li>
+                        <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="nav_packages">Shows</a></li>
+                        <li><a href="#location" class="hover:text-gold transition-colors" data-i18n="nav_location">Location</a></li>
+                    </ul>
                 </div>
-                <div class="about-image animate-on-scroll">
-                    <img src="images\sajanpeacock.jpg" alt="Magician Sajan performing">
+
+                <!-- Column 3: Show Formats -->
+                <div class="space-y-4">
+                    <h4 class="text-[11px] font-extrabold uppercase tracking-widest text-white" data-i18n="footer_col_shows">Performance Acts</h4>
+                    <ul class="space-y-3 font-semibold text-[13px] text-gray-400">
+                        <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="feat_1">Mentalism</a></li>
+                        <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="pkg1_tag">Corporate Gala</a></li>
+                        <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="pkg2_tag">Weddings & Sangeet</a></li>
+                        <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="pkg3_tag">Mega Auditorium</a></li>
+                    </ul>
                 </div>
+
+                <!-- Column 4: Contact & Studio Info -->
+                <div class="space-y-4">
+                    <h4 class="text-[11px] font-extrabold uppercase tracking-widest text-white" data-i18n="footer_col_location">Studio & Direct Line</h4>
+                    <ul class="space-y-4 font-semibold text-[13px] text-gray-400">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-map-marker-alt text-gold mt-1"></i>
+                            <span>Nanniode, Palakkad,<br>Kerala, India - 678534</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-phone-alt text-gold"></i>
+                            <a href="tel:+919387614714" class="hover:text-gold transition-colors">+91 93876 14714</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fab fa-google text-gold"></i>
+                            <a href="https://share.google/Vb6fmC5okCD2XMjJn" target="_blank" class="hover:text-gold transition-colors" data-i18n="btn_google">Google Profile</a>
+                        </li>
+                    </ul>
+                </div>
+                
             </div>
-        </div>
-    </section>
 
-    <section class="gallery" id="gallery">
-        <div class="section-container" >
-            <h2 class="section-title animate-on-scroll">Magical Moments</h2>
-
-            <div class="gallery-carousel-container" >
-                <div class="gallery-carousel" >
-                    <!-- Gallery Item 1 -->
-                    <div class="gallery-slide animate-on-scroll">
-                        <div class="gallery-item">
-                            <img src="images\sajan1.jpg" alt="Corporate Magic Show">
-                            <div class="gallery-item-caption">
-                                <h3>Corporate Event</h3>
-                                <p>Annual conference magic performance</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gallery Item 2 -->
-                    <div class="gallery-slide animate-on-scroll">
-                        <div class="gallery-item">
-                            <img src="images\sajan6.jpg" alt="Wedding Magic Performance">
-                            <div class="gallery-item-caption">
-                                <h3>Wedding Celebration</h3>
-                                <p>Table magic for wedding guests</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gallery Item 3 -->
-                    <div class="gallery-slide animate-on-scroll">
-                        <div class="gallery-item">
-                            <img src="images\sajan7.jpg" alt="Product Launch Magic">
-                            <div class="gallery-item-caption">
-                                <h3>Product Launch</h3>
-                                <p>Magical reveal of new product</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gallery Item 4 -->
-                    <div class="gallery-slide animate-on-scroll">
-                        <div class="gallery-item">
-                            <img src="images\sajan4.jpg" alt="Wedding Reception Magic">
-                            <div class="gallery-item-caption">
-                                <h3>Wedding Reception</h3>
-                                <p>Close-up magic for wedding guests</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gallery Item 5 -->
-                    <div class="gallery-slide animate-on-scroll">
-                        <div class="gallery-item">
-                            <img src="images\sajan flower.jpg" alt="Birthday Party Magic">
-                            <div class="gallery-item-caption">
-                                <h3>Birthday Party</h3>
-                                <p>Magic show for children's birthday</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gallery Item 6 -->
-                    <div class="gallery-slide animate-on-scroll">
-                        <div class="gallery-item">
-                            <img src="images\sajanpeacock.jpg" alt="Stage Performance">
-                            <div class="gallery-item-caption">
-                                <h3>Stage Performance</h3>
-                                <p>Grand illusions for large audiences</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Footer Bottom Line -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-semibold text-gray-500 text-[11px]">
+                <p>&copy; <span id="year"></span> Magician Sajan. All Rights Reserved. Master of Illusion & Mentalism.</p>
+                <div class="flex items-center gap-4">
+                    <a href="#home" class="hover:text-white transition-colors flex items-center gap-1.5">Back to Top <i class="fas fa-arrow-up text-[10px]"></i></a>
                 </div>
             </div>
-
-            <div class="gallery-controls">
-                <button class="gallery-prev"><i class="fas fa-chevron-left"></i></button>
-                <button class="gallery-next"><i class="fas fa-chevron-right"></i></button>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="contact" style="padding: 80px 20px; background-color: #f9f9f9;">
-        <div class="section-container">
-            <h2 class="section-title animate-on-scroll">Get In Touch</h2>
-            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-                <p style="font-size: 1.2rem; margin-bottom: 30px; color: var(--dark-gray);">
-                    Ready to add magic to your event? Contact me for bookings and inquiries.
-                </p>
-                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                    <a href="tel:+919387614714" style="text-decoration: none;">
-                        <button
-                            style="padding: 12px 30px; background-color: var(--accent-color); color: white; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease;">
-                            <i class="fas fa-phone" style="margin-right: 8px;"></i> Call Now
-                        </button>
-                    </a>
-                    <a href="https://wa.me/919387614714" style="text-decoration: none;" target="_blank">
-                        <button
-                            style="padding: 12px 30px; background-color: var(--primary-color); color: white; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease;">
-                            <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> WhatsApp
-                        </button>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="footer-content">
-            <p>Magician Sajan - Creating unforgettable magical experiences for events across India</p>
-
-            <div class="footer-social">
-                <a href="https://wa.me/919387614714" target="_blank" aria-label="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-                <a href="https://www.facebook.com/sajan.nanniode/?_rdr" target="_blank" aria-label="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="https://www.instagram.com/magician__sajan/?hl=en" target="_blank" aria-label="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="mailto:magiciansajan@example.com" target="_blank" aria-label="Email">
-                    <i class="fas fa-envelope"></i>
-                </a>
-                <a href="tel:+919387614714" aria-label="Phone">
-                    <i class="fas fa-phone"></i>
-                </a>
-            </div>
-
-            <div class="footer-links">
-                <a href="#home">Home</a>
-                <a href="#about">About</a>
-                <a href="#gallery">Gallery</a>
-                <a href="#contact">Contact</a>
-            </div>
-
-            <div class="copyright">
-                &copy; <span id="year"></span> Magician Sajan. All Rights Reserved.
-            </div>
+            
         </div>
     </footer>
 
-    <div class="back-to-top" aria-label="Back to top">
-        <i class="fas fa-arrow-up"></i>
-    </div>
-
+    <!-- Interactive Scripts: Three.js, GSAP, i18n -->
     <script>
-        // Set current year in footer
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Hero Carousel Functionality
-        const heroCarousel = document.querySelector('.hero-carousel');
-        const heroSlides = document.querySelectorAll('.hero-slide');
-        const prevBtn = document.querySelector('.prev');
-        const nextBtn = document.querySelector('.next');
-        let currentSlide = 0;
-        const slideCount = heroSlides.length;
+        /* =========================================================================
+           1. Three.js - 3D Particles & Sacred Geometry (Icosahedron)
+           ========================================================================= */
+        (function initThreeJS() {
+            const container = document.getElementById('threeJsCanvasContainer');
+            if (!container || typeof THREE === 'undefined') return;
 
-        // Create indicators
-        const indicatorsContainer = document.querySelector('.carousel-indicators');
-        heroSlides.forEach((_, index) => {
-            const indicator = document.createElement('button');
-            indicator.classList.add('carousel-indicator');
-            if (index === 0) indicator.classList.add('active');
-            indicator.addEventListener('click', () => goToSlide(index));
-            indicatorsContainer.appendChild(indicator);
-        });
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 50;
 
-        function updateCarousel() {
-            heroCarousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
 
-            // Update active slide
-            heroSlides.forEach((slide, index) => {
-                slide.classList.toggle('active', index === currentSlide);
-            });
-
-            // Update indicators
-            document.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
-                indicator.classList.toggle('active', index === currentSlide);
-            });
-        }
-
-        function goToSlide(slideIndex) {
-            currentSlide = (slideIndex + slideCount) % slideCount;
-            updateCarousel();
-        }
-
-        function nextSlide() {
-            goToSlide(currentSlide + 1);
-        }
-
-        function prevSlide() {
-            goToSlide(currentSlide - 1);
-        }
-
-        nextBtn.addEventListener('click', nextSlide);
-        prevBtn.addEventListener('click', prevSlide);
-
-        // Auto-advance carousel
-        let carouselInterval = setInterval(nextSlide, 5000);
-
-        function resetInterval() {
-            clearInterval(carouselInterval);
-            carouselInterval = setInterval(nextSlide, 5000);
-        }
-
-        heroCarousel.addEventListener('mouseenter', () => clearInterval(carouselInterval));
-        heroCarousel.addEventListener('mouseleave', resetInterval);
-
-        // Gallery Carousel Functionality
-        const galleryCarousel = document.querySelector('.gallery-carousel');
-        const gallerySlides = document.querySelectorAll('.gallery-slide');
-        const galleryPrev = document.querySelector('.gallery-prev');
-        const galleryNext = document.querySelector('.gallery-next');
-        let currentGallerySlide = 0;
-        const gallerySlideCount = gallerySlides.length;
-
-        function updateGalleryCarousel() {
-            // Update active class for animation
-            gallerySlides.forEach((slide, index) => {
-                slide.classList.toggle('active', index === currentGallerySlide);
-            });
-
-            // Calculate transform value based on screen width
-            let transformValue;
-            if (window.innerWidth >= 1024) {
-                transformValue = -currentGallerySlide * 33.333;
-            } else if (window.innerWidth >= 768) {
-                transformValue = -currentGallerySlide * 50;
-            } else {
-                transformValue = -currentGallerySlide * 100;
+            const particleCount = 200;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 150;
+                positions[i + 1] = (Math.random() - 0.5) * 100;
+                positions[i + 2] = (Math.random() - 0.5) * 80;
             }
-
-            galleryCarousel.style.transform = `translateX(${transformValue}%)`;
-        }
-
-        function nextGallerySlide() {
-            currentGallerySlide = (currentGallerySlide + 1) % gallerySlideCount;
-            updateGalleryCarousel();
-        }
-
-        function prevGallerySlide() {
-            currentGallerySlide = (currentGallerySlide - 1 + gallerySlideCount) % gallerySlideCount;
-            updateGalleryCarousel();
-        }
-
-        galleryNext.addEventListener('click', nextGallerySlide);
-        galleryPrev.addEventListener('click', prevGallerySlide);
-
-        // Initialize gallery
-        updateGalleryCarousel();
-
-        // Intersection Observer for scroll animations
-        const animateElements = document.querySelectorAll('.animate-on-scroll');
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animated');
-                    observer.unobserve(entry.target);
-                }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const pMaterial = new THREE.PointsMaterial({
+                color: 0xE5B958, size: 0.8, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending
             });
-        }, {
-            threshold: 0.1
-        });
+            const particles = new THREE.Points(geometry, pMaterial);
+            scene.add(particles);
 
-        animateElements.forEach(element => {
-            observer.observe(element);
-        });
+            const icoGeo = new THREE.IcosahedronGeometry(18, 0);
+            const icoMat = new THREE.MeshBasicMaterial({ color: 0xD4AF37, wireframe: true, transparent: true, opacity: 0.15 });
+            const icosahedron = new THREE.Mesh(icoGeo, icoMat);
+            icosahedron.position.x = 25;
+            scene.add(icosahedron);
 
-        // Back to Top Button
-        const backToTop = document.querySelector('.back-to-top');
+            let mouseX = 0, mouseY = 0;
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+            });
 
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.0005;
+                particles.rotation.x += 0.0002;
+                icosahedron.rotation.y -= 0.002;
+                icosahedron.rotation.x += 0.001;
+
+                camera.position.x += (mouseX * 8 - camera.position.x) * 0.05;
+                camera.position.y += (-mouseY * 8 - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+                renderer.render(scene, camera);
             }
-        });
+            animate();
 
-        backToTop.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
             });
+        })();
+
+        /* =========================================================================
+           2. GSAP ScrollTrigger Animations (Framer-like Feel)
+           ========================================================================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                gsap.from(".gsap-hero-elem", {
+                    y: 40, opacity: 0, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.2
+                });
+
+                gsap.utils.toArray('.gsap-fade-up').forEach(elem => {
+                    gsap.from(elem, {
+                        scrollTrigger: { trigger: elem, start: "top 85%" },
+                        y: 40, opacity: 0, duration: 1, ease: "power3.out"
+                    });
+                });
+
+                gsap.utils.toArray('.gsap-scale-up').forEach(elem => {
+                    gsap.from(elem, {
+                        scrollTrigger: { trigger: elem, start: "top 85%" },
+                        y: 50, scale: 0.95, opacity: 0, duration: 1, ease: "power3.out"
+                    });
+                });
+
+                gsap.utils.toArray('.gsap-stagger-container').forEach(container => {
+                    gsap.from(container.querySelectorAll('.gsap-stagger-item'), {
+                        scrollTrigger: { trigger: container, start: "top 85%" },
+                        y: 40, opacity: 0, duration: 0.8, stagger: 0.12, ease: "power2.out"
+                    });
+                });
+            }
+            applyLanguage(currentLang);
         });
 
-        // Mobile menu toggle
-        const navToggle = document.getElementById('nav-toggle');
-        const navLinks = document.querySelectorAll('nav a');
+        /* =========================================================================
+           3. Bilingual Translation Engine
+           ========================================================================= */
+        const i18n = {
+            en: {
+                nav_home: "Home", nav_about: "About", nav_media: "Showcase", nav_packages: "Shows",
+                nav_location: "Location", nav_contact: "Bookings", nav_btn_call: "Call", btn_google: "Google Profile", btn_reserve: "Inquire",
+                hero_pill: "16+ Years Stage Excellence", hero_title_1: "Magician Sajan.", hero_title_2: "Pure Impossible.",
+                hero_desc: "From auditorium grand illusions to high-touch psychological mentalism for India’s finest galas, weddings, and corporate summits.",
+                btn_book_now: "Book Performance", btn_quick_wa: "WhatsApp Now",
+                stat_years: "Years Active", stat_shows: "Shows Delivered", stat_faces: "Audience Members", stat_satisfaction: "Delight Rating",
+                carousel_tag: "Visual Chronicle", carousel_heading: "Stage & Media Showcase", carousel_sub: "Explore high-resolution captures and live theatrical performance teasers.",
+                about_tag: "The Philosophy", about_heading: "Crafting The Impossible", about_role: "Professional Illusionist & Mentalist",
+                about_origin: "Based in Nanniode, Palakkad • Nationwide", story_title: "16 Years of Unmatched Stage Craft",
+                story_p1: "With over 16 years of dedicated performance across India, Sajan redefines modern magic by weaving theatrical grandeur with spontaneous crowd engagement.",
+                story_p2: "His repertoire merges sleight-of-hand mastery, impossible psychological thought-reading, and scale illusions tailored for international corporate conclaves, grand destination weddings, and festive galas.",
+                feat_1: "Mentalism", feat_1_sub: "Mind Reading Feats", feat_2: "Close-Up", feat_2_sub: "Inches From Eyes", feat_3: "Grand Stage", feat_3_sub: "Spectacles for 1000s",
+                packages_tag: "Custom Experiences", packages_heading: "Tailored Show Packages", packages_sub: "Specially engineered formats designed to blend seamlessly with your itinerary.",
+                pkg1_tag: "Corporate Gala", pkg1_title: "The Executive Keynote", pkg1_desc: "Transform corporate annual summits, awards banquets, and product launches with customized magical reveals integrated with brand values.",
+                pkg1_f1: "Customized Product Reveals", pkg1_f2: "Leadership Mind-Reading", pkg1_f3: "High-Impact Theatrical Staging",
+                pkg2_tag: "Weddings & Sangeet", pkg2_title: "Royal Wedding Enchantment", pkg2_desc: "Mesmerize high-profile wedding guests with interactive walkaround table magic during cocktails, followed by a romantic stage climax.",
+                pkg2_f1: "Cocktail Hour Walkaround Sleights", pkg2_f2: "Bride & Groom Special Illusion", pkg2_f3: "Table-to-Table Interactive Marvels",
+                pkg3_tag: "Mega Auditorium", pkg3_title: "The Grand Spectacle", pkg3_desc: "Full-scale stage magic featuring breathtaking levitations, instant teleportations, escapology, and theatrical wonder for large audiences.",
+                pkg3_f1: "Levitation & Teleportation Staging", pkg3_f2: "Mega Escapology & Suspense Feats", pkg3_f3: "Professional Sound & Lighting Sync",
+                btn_inquire_pkg: "Inquire Package",
+                loc_tag: "Headquarters & Availability", loc_heading: "Rooted in Kerala.\nPerforming Everywhere.",
+                loc_desc: "Magician Sajan is proudly based out of Nanniode, Palakkad, frequently headlining prominent stage shows, resort galas, destination weddings, and corporate summits across India.",
+                loc_home_title: "Home Studio", loc_home_desc: "Nanniode, Palakkad, Kerala", loc_tour_title: "Tour Radius", loc_tour_desc: "Kerala & All-India Travel",
+                hub_card_title: "Performance Operations", hub_card_sub: "Kerala • Tamil Nadu • Pan India", status_active: "Booking Active",
+                hub1_t: "Kerala Base Operations", hub1_d: "Based in Nanniode, Palakkad. Direct servicing to Kochi, Kozhikode, Thrissur, Trivandrum & statewide.",
+                hub2_t: "South India Regional Shows", hub2_d: "Extensive coverage across Coimbatore, Bengaluru, Chennai, and Hyderabad luxury destinations.",
+                hub3_t: "Bespoke Destination Events", hub3_d: "All-India flight-accessible venues for multi-day corporate conventions & destination weddings.",
+                form_tag: "Event Inquiries", form_heading: "Reserve Your Date", form_sub: "Fill out the event details below to initiate instant booking on WhatsApp.",
+                label_name: "Your Name *", label_phone: "Phone / WhatsApp Number *", label_event_type: "Event Category *", label_date: "Target Date & Location *",
+                label_notes: "Show Requirements / Special Requests", privacy_note: "Direct instant dispatch to Magician Sajan's WhatsApp", btn_send_whatsapp: "Send Booking to WhatsApp",
+                footer_brand_desc: "Creating unforgettable, mind-defying illusions and psychological mentalism for corporate summits, luxury weddings, and stage spectacles across India.",
+                footer_col_nav: "Navigation", footer_col_shows: "Performance Acts", footer_col_location: "Studio & Direct Line"
+            },
+            ml: {
+                nav_home: "ഹോം", nav_about: "വിവരണം", nav_media: "ഗാലറി", nav_packages: "ഷോകള്‍", nav_location: "സ്ഥലം", nav_contact: "ബുക്കിംഗ്", nav_btn_call: "വിളിക്കുക", btn_google: "ഗൂഗിൾ പ്രൊഫൈൽ", btn_reserve: "വിവരങ്ങൾ",
+                hero_pill: "16-ലധികം വർഷത്തെ മാന്ത്രിക മികവ്", hero_title_1: "മാന്ത്രികൻ സാജൻ.", hero_title_2: "മാന്ത്രിക വിസ്മയം.",
+                hero_desc: "മെഗാ സ്റ്റേജ് ഇല്ല്യൂഷനുകൾ മുതൽ മനസ്സ് വായിക്കുന്ന അത്ഭുത വിദ്യകൾ വരെ, നിങ്ങളുടെ ആഘോഷങ്ങളെ അവിസ്മരണീയമാക്കുന്ന മാന്ത്രിക സാന്നിധ്യം.",
+                btn_book_now: "ഷോ ബുക്ക് ചെയ്യാം", btn_quick_wa: "വാട്സാപ്പ് ചെയ്യൂ",
+                stat_years: "വർഷത്തെ പാരമ്പര്യം", stat_shows: "വിജയകരമായ ഷോകള്‍", stat_faces: "വിസ്മയിച്ച കാണികൾ", stat_satisfaction: "ജനപ്രീതി",
+                carousel_tag: "മാന്ത്രിക മുഹൂർത്തങ്ങൾ", carousel_heading: "സ്റ്റേജ് & മീഡിയ ഷോകേസ്", carousel_sub: "വേദികളിലെ അവിസ്മരണീയ ദൃശ്യങ്ങളും ലൈവ് വീഡിയോകളും കാണാം.",
+                about_tag: "മാന്ത്രിക ദർശനം", about_heading: "അസാധ്യമായത് സാധ്യമാക്കുന്ന കല", about_role: "പ്രൊഫഷണൽ ഇല്ല്യൂഷനിസ്റ്റ് & മെന്റലിസ്റ്റ്",
+                about_origin: "നണ്ണിയോട്, പാലക്കാട് • ഇന്ത്യയൊട്ടാകെ", story_title: "16 വർഷത്തെ മാന്ത്രിക മികവ്",
+                story_p1: "കഴിഞ്ഞ 16 വർഷത്തിലേറെയായി ഇന്ത്യയൊട്ടാകെയുള്ള വേദികളിൽ തനതായ മാന്ത്രിക ശൈലികൊണ്ട് കാണികളെ വിസ്മയിപ്പിക്കുന്ന പ്രശസ്ത മാന്ത്രികനാണ് സാജൻ.",
+                story_p2: "കൺകെട്ട് വിദ്യകൾ, മെന്റലിസം, വൻ സ്റ്റേജ് ഇല്ല്യൂഷനുകൾ എന്നിവയിലൂടെ ഏതൊരു പരിപാടിയെയും അവിസ്മരണീയമാക്കാൻ അദ്ദേഹം ശ്രദ്ധിക്കുന്നു.",
+                feat_1: "മെന്റലിസം", feat_1_sub: "മനസ്സ് വായിക്കുന്ന കല", feat_2: "ക്ലോസ്-അപ്പ്", feat_2_sub: "കൺമുന്നിലെ മാജിക്", feat_3: "സ്റ്റേജ് ഷോ", feat_3_sub: "വൻ ജനക്കൂട്ടത്തിന്",
+                packages_tag: "പ്രത്യേക പാക്കേജുകൾ", packages_heading: "നിങ്ങൾക്കായുള്ള മാജിക് ഷോകള്‍", packages_sub: "നിങ്ങളുടെ പരിപാടിക്ക് അനുയോജ്യമായ രീതിയിൽ ചിട്ടപ്പെടുത്തിയ പ്രത്യേക ഷോകള്‍.",
+                pkg1_tag: "കോർപ്പറേറ്റ് ഗാല", pkg1_title: "എക്സിക്യൂട്ടീവ് കീനോട്ട്", pkg1_desc: "ബിസിനസ്സ് മീറ്റുകൾ, പുതിയ ഉൽപ്പന്നങ്ങളുടെ ലോഞ്ച് എന്നിവയ്ക്ക് മാന്ത്രിക സാന്നിധ്യം.",
+                pkg1_f1: "ബ്രാൻഡ് ലോഞ്ച് മാജിക് പ്രകടനം", pkg1_f2: "നേതൃത്വ മൈൻഡ് റീഡിംഗ് സെഷൻ", pkg1_f3: "പ്രത്യേക സ്റ്റേജ് അവതരണം",
+                pkg2_tag: "വിവാഹ സൽക്കാരങ്ങൾ", pkg2_title: "വിവാഹ വിരുന്നുകളിലെ വിസ്മയം", pkg2_desc: "വിരുന്നുകാരെ അത്ഭുതപ്പെടുത്തുന്ന ക്ലോസ്-അപ്പ് മാജിക്കും ദമ്പതികൾക്കായുള്ള പ്രത്യേക മാന്ത്രിക നിമിഷങ്ങളും.",
+                pkg2_f1: "ടേബിൾ-ടു-ടേബിൾ മാജിക്", pkg2_f2: "ദമ്പതികൾക്കായി പ്രത്യേക സർപ്രൈസ്", pkg2_f3: "കാണികളുമായി സംവദിക്കുന്ന പ്രകടനം",
+                pkg3_tag: "മെഗാ ഓഡിറ്റോറിയം", pkg3_title: "ഗ്രാൻഡ് സ്റ്റേജ് വിസ്മയം", pkg3_desc: "ലെവിറ്റേഷൻ, ടെലിപോർട്ടേഷൻ തുടങ്ങിയ വൻ സ്റ്റേജ് വിദ്യകൾ ഉൾക്കൊള്ളുന്ന ഷോ.",
+                pkg3_f1: "ലെവിറ്റേഷൻ സ്റ്റേജ് ഇല്ല്യൂഷൻസ്", pkg3_f2: "ത്രില്ലടിപ്പിക്കുന്ന എസ്കേപ്പ് മാജിക്", pkg3_f3: "ലൈറ്റിംഗ് & മ്യൂസിക് സമന്വയം",
+                btn_inquire_pkg: "കൂടുതൽ വിവരങ്ങൾക്ക്",
+                loc_tag: "പ്രവർത്തന കേന്ദ്രം", loc_heading: "പാലക്കാട് സ്വന്തം നാട്.\nവേദികൾ എവിടെയും.",
+                loc_desc: "കേരളത്തിലെ പാലക്കാട് ജില്ലയിലെ നണ്ണിയോട് ആസ്ഥാനമാക്കി പ്രവർത്തിക്കുന്ന സാജൻ, കേരളത്തിനകത്തും ഇന്ത്യയിലെ പ്രധാന നഗരങ്ങളിലും ഷോകള്‍ അവതരിപ്പിക്കുന്നു.",
+                loc_home_title: "സ്വന്തം നാട്", loc_home_desc: "നണ്ണിയോട്, പാലക്കാട്, കേരളം", loc_tour_title: "ഷോ പരിധി", loc_tour_desc: "കേരളം & ഇന്ത്യയൊട്ടാകെ",
+                hub_card_title: "പ്രധാന പ്രവർത്തന കേന്ദ്രങ്ങൾ", hub_card_sub: "കേരളം • തമിഴ്നാട് • ഓൾ ഇന്ത്യ", status_active: "ബുക്കിംഗ് ലഭ്യമാണ്",
+                hub1_t: "കേരളത്തിലെ പ്രധാന വേദികൾ", hub1_d: "പാലക്കാട്, കൊച്ചി, കോഴിക്കോട്, തൃശൂർ, തിരുവനന്തപുരം.",
+                hub2_t: "ദക്ഷിണേന്ത്യൻ നഗരങ്ങൾ", hub2_d: "കോയമ്പത്തൂർ, ബെംഗളൂരു, ചെന്നൈ, ഹൈദരാബാദ്.",
+                hub3_t: "ഡെസ്റ്റിനേഷൻ ഇവന്റുകൾ", hub3_d: "വൻകിട വിവാഹങ്ങൾക്കും വാർഷിക മീറ്റുകൾക്കുമായി ഇന്ത്യയൊട്ടാകെ യാത്രകൾ.",
+                form_tag: "തീയതി റിസർവ് ചെയ്യാം", form_heading: "അടുത്ത പരിപാടി മാന്ത്രികമാക്കൂ", form_sub: "വിവരങ്ങൾ നൽകിയ ശേഷം ഒറ്റ ക്ലിക്കിലൂടെ വാട്സാപ്പ് വഴി നേരിട്ട് ബന്ധപ്പെടാം.",
+                label_name: "നിങ്ങളുടെ പേര് *", label_phone: "ഫോൺ / വാട്സാപ്പ് നമ്പർ *", label_event_type: "പരിപാടിയുടെ ഇനം *", label_date: "തീയതിയും സ്ഥലവും *",
+                label_notes: "പ്രത്യേക നിർദ്ദേശങ്ങൾ / ആവശ്യങ്ങൾ", privacy_note: "നേരിട്ട് സാജന്റെ വാട്സാപ്പിലേക്ക് വിവരങ്ങൾ ലഭിക്കുന്നു", btn_send_whatsapp: "വാട്സാപ്പിൽ അയക്കുക",
+                footer_brand_desc: "വിവാഹങ്ങൾ, കോർപ്പറേറ്റ് മീറ്റിംഗുകൾ, മെഗാ സ്റ്റേജ് ഇവന്റുകൾ എന്നിവയ്ക്ക് അവിസ്മരണീയമായ മാന്ത്രിക അനുഭവം സമ്മാനിക്കുന്നു.",
+                footer_col_nav: "മെനു", footer_col_shows: "പ്രധാന ഷോകള്‍", footer_col_location: "വിലാസവും ഫോണും"
+            }
+        };
 
-        navLinks.forEach(link => {
+        let currentLang = localStorage.getItem('sajan_lang') || 'en';
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('sajan_lang', lang);
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang] && i18n[lang][key]) { el.textContent = i18n[lang][key]; }
+            });
+            document.getElementById('langLabel').textContent = lang === 'en' ? 'മലയാളം' : 'English';
+            updateSlideContent(); // Keep carousel text in sync
+        }
+
+        document.getElementById('langToggleBtn').addEventListener('click', () => {
+            applyLanguage(currentLang === 'en' ? 'ml' : 'en');
+        });
+
+        // 4. Dark & Light Theme System
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const htmlElement = document.documentElement;
+
+        function applyTheme(theme) {
+            htmlElement.setAttribute('data-theme', theme);
+            theme === 'dark' ? htmlElement.classList.add('dark') : htmlElement.classList.remove('dark');
+            localStorage.setItem('sajan_theme', theme);
+        }
+        applyTheme(localStorage.getItem('sajan_theme') || 'dark');
+
+        themeToggleBtn.addEventListener('click', () => {
+            applyTheme(htmlElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        });
+
+        // 5. Mobile Nav Drawer
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden'); mobileMenu.classList.toggle('flex');
+        });
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
             link.addEventListener('click', () => {
-                navToggle.checked = false;
+                mobileMenu.classList.add('hidden'); mobileMenu.classList.remove('flex');
             });
         });
 
-        // Animate nav links when menu opens
-        navToggle.addEventListener('change', function () {
-            if (this.checked) {
-                navLinks.forEach((link, index) => {
-                    link.style.opacity = '1';
-                    link.style.transform = 'translateY(0)';
-                    link.style.transitionDelay = `${index * 0.1 + 0.3}s`;
-                });
+        // 6. Media Showcase Carousel
+        const mediaItems = [
+            { type: 'image', src: 'images/sajan 2.jpg', titleEn: 'The Symphony of Wonder', titleMl: 'വിസ്മയക്കാഴ്ചകളുടെ വേദി', descEn: 'Auditorium grand opening acts and illusions that captivate audiences.', descMl: 'വൻ ജനക്കൂട്ടത്തെ സാക്ഷിനിർത്തി നടത്തുന്ന മെഗാ സ്റ്റേജ് മാജിക്.' },
+            { type: 'video', src: 'https://www.image2url.com/r2/default/videos/1790163906008-5c2a8c45-0601-4aa2-97e2-19ca71a0ce23.mp4', titleEn: 'Live Magic Particles & Stage Aura', titleMl: 'ലൈവ് സ്റ്റേജ് ട്രെയിലർ', descEn: 'Lighting, psychological staging, and high-energy illusion teasers.', descMl: 'അത്ഭുതപ്പെടുത്തുന്ന പ്രകാശവിന്യാസവും ചിന്തകളെ വെല്ലുവിളിക്കുന്ന പ്രകടനവും.' },
+            { type: 'image', src: 'images/sajan1.jpg', titleEn: 'Corporate Keynotes & Product Reveals', titleMl: 'കോർപ്പറേറ്റ് ബ്രാൻഡ് ലോഞ്ചുകൾ', descEn: 'Revealing high-stakes products and leadership milestones with magic.', descMl: 'ബിസിനസ്സ് ഉച്ചകോടികളിൽ ഉൽപ്പന്നങ്ങൾ മാന്ത്രികമായി അനാവരണം ചെയ്യുന്നു.' },
+            { type: 'image', src: 'images/sajan6.jpg', titleEn: 'Royal Wedding Table Encounters', titleMl: 'വിവാഹ സൽക്കാരങ്ങളിലെ വിസ്മയം', descEn: 'Intimate close-up sleights uniting wedding guests with joy and laughter.', descMl: 'വിരുന്നുകാരെ ഒന്നടങ്കം ആഹ്ലാദിപ്പിക്കുന്ന കൺമുന്നിലെ മാന്ത്രിക വിസ്മയം.' },
+            { type: 'image', src: 'images/sajan flower.jpg', titleEn: 'Festive Universal Family Wonder', titleMl: 'കുടുംബ സംഗമങ്ങളിലെ സന്തോഷം', descEn: 'Wholesome humor and captivating illusions designed for every generation.', descMl: 'എല്ലാ പ്രായക്കാരെയും ചിരിപ്പിക്കുകയും ചിന്തിപ്പിക്കുകയും ചെയ്യുന്ന മാജിക്.' }
+        ];
+
+        let currentMediaIndex = 0;
+        const carouselImg = document.getElementById('carouselImg');
+        const carouselVideo = document.getElementById('carouselVideo');
+        const slideTitle = document.getElementById('slideTitle');
+        const slideDesc = document.getElementById('slideDesc');
+        const slideTypeBadge = document.getElementById('slideTypeBadge');
+        const carouselDotsContainer = document.getElementById('carouselDots');
+
+        mediaItems.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${i === 0 ? 'w-6 bg-gold' : 'bg-slate-500'}`;
+            dot.addEventListener('click', () => setMediaSlide(i));
+            carouselDotsContainer.appendChild(dot);
+        });
+
+        function updateSlideContent() {
+            const item = mediaItems[currentMediaIndex];
+            slideTitle.textContent = currentLang === 'en' ? item.titleEn : item.titleMl;
+            slideDesc.textContent = currentLang === 'en' ? item.descEn : item.descMl;
+            slideTypeBadge.textContent = item.type === 'video' ? 'Video Act' : 'Photograph';
+
+            if (item.type === 'video') {
+                carouselImg.classList.add('hidden'); 
+                carouselVideo.classList.remove('hidden');
+                carouselVideo.src = item.src;
+                carouselVideo.play().catch(() => {});
             } else {
-                navLinks.forEach(link => {
-                    link.style.opacity = '0';
-                    link.style.transform = 'translateY(20px)';
-                    link.style.transitionDelay = '0s';
-                });
+                carouselVideo.pause(); 
+                carouselVideo.classList.add('hidden');
+                carouselImg.classList.remove('hidden'); 
+                carouselImg.src = item.src;
             }
-        });
 
-        // Initialize nav links as hidden
-        navLinks.forEach(link => {
-            link.style.opacity = '0';
-            link.style.transform = 'translateY(20px)';
-        });
-
-        // Responsive adjustments
-        function handleResize() {
-            updateGalleryCarousel();
+            carouselDotsContainer.querySelectorAll('button').forEach((d, idx) => {
+                d.className = idx === currentMediaIndex ? 'w-6 h-2 rounded-full bg-gold transition-all duration-300' : 'w-2 h-2 rounded-full bg-slate-500 transition-all duration-300';
+            });
         }
 
-        window.addEventListener('resize', handleResize);
+        function setMediaSlide(index) {
+            currentMediaIndex = (index + mediaItems.length) % mediaItems.length;
+            updateSlideContent();
+        }
+
+        document.getElementById('mediaNextBtn').addEventListener('click', () => setMediaSlide(currentMediaIndex + 1));
+        document.getElementById('mediaPrevBtn').addEventListener('click', () => setMediaSlide(currentMediaIndex - 1));
+
+        // 7. Contact Form -> WhatsApp Redirection Handler
+        document.getElementById('bookingForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const eventType = document.getElementById('eventType').value;
+            const dateLoc = document.getElementById('eventDateLoc').value.trim();
+            const notes = document.getElementById('eventNotes').value.trim() || 'None';
+
+            const message = `🪄 *SHOW BOOKING INQUIRY - MAGICIAN SAJAN*\n━━━━━━━━━━━━━━━━━━━━\n👤 *Client Name:* ${name}\n📞 *Contact Number:* ${phone}\n🎪 *Event Category:* ${eventType}\n📍 *Date & Location:* ${dateLoc}\n📝 *Show Requirements:*\n${notes}\n━━━━━━━━━━━━━━━━━━━━\n_Location Base: Nanniode, Palakkad, Kerala_`;
+            window.open(`https://wa.me/919387614714?text=${encodeURIComponent(message)}`, '_blank');
+        });
+        
+        // Initialize VanillaTilt
+        if (typeof VanillaTilt !== 'undefined') {
+            VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
+        }
     </script>
 </body>
 
