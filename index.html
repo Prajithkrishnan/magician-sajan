@@ -18,9 +18,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Three.js for 3D Interactive WebGL Background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
     <!-- Vanilla Tilt for Reactive 3D Card Tilt Effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 
@@ -103,11 +100,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        [data-theme="light"] .apple-title-gradient {
-            background: linear-gradient(180deg, #1D1D1F 0%, #434344 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+     
 
         .gold-gradient-text {
             background: linear-gradient(135deg, #FFE79A 0%, #D4AF37 60%, #9E7D17 100%);
@@ -147,21 +140,215 @@
         @keyframes apple-pulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55); } 70% { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
         .whatsapp-float-btn { animation: apple-pulse 2.2s infinite; }
 
-        .apple-input { background: rgba(130, 130, 137, 0.08); border: 1px solid var(--border-glass); color: var(--text-primary); transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+        .apple-input { background: rgba(130, 130, 137, 0.08); border: 1px solid var(--border-glass); color: var(--text-primary); transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); color-scheme: light; }
+        [data-theme="dark"] .apple-input { color-scheme: dark; }
         .apple-input:focus { outline: none; border-color: #D4AF37; background: rgba(130, 130, 137, 0.14); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18); }
         .gsap-hidden { opacity: 0; visibility: hidden; }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
         .touch-pan-y { touch-action: pan-y; }
+        .h-full-flex { height: 100%; display: flex; flex-direction: column; }
+
+        /* Mobile fix: prevent native date/location controls from overflowing the booking card */
+        @media (max-width: 639px) {
+            #eventDate,
+            #eventLoc {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            #eventDate {
+                -webkit-appearance: none;
+                appearance: none;
+            }
+        }
+
+
+
+        /* ================================================================
+           PREMIUM MAGIC 3D ATMOSPHERE — POST-HERO ONLY
+           Uses the supplied pigeon + magic-hat images with CSS/GSAP depth.
+           No generated hat, wand or card drawings.
+           ================================================================ */
+        #magic-3d-background {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s cubic-bezier(.16,1,.3,1), visibility 0s linear 1s;
+            contain: strict;
+            perspective: 1200px;
+        }
+
+        #magic-3d-background.is-active {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 1s cubic-bezier(.16,1,.3,1);
+        }
+
+        #magic-3d-background::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% 42%, rgba(212,175,55,.065), transparent 30%),
+                radial-gradient(circle at 82% 28%, rgba(255,230,145,.035), transparent 22%);
+            mix-blend-mode: screen;
+        }
+
+        .magic-bg-glow {
+            position: absolute;
+            left: 50%;
+            top: 52%;
+            width: min(58vw, 900px);
+            aspect-ratio: 1;
+            transform: translate(-50%,-50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,175,55,.11) 0%, rgba(212,175,55,.035) 30%, transparent 68%);
+            filter: blur(34px);
+            opacity: .75;
+            will-change: transform;
+        }
+
+        .magic-bg-ring {
+            position: absolute;
+            left: 50%;
+            top: 62%;
+            width: min(56vw, 860px);
+            aspect-ratio: 1;
+            transform: translate(-50%,-50%) rotateX(70deg) rotateZ(-16deg);
+            border: 1px solid rgba(212,175,55,.055);
+            border-radius: 50%;
+            box-shadow: 0 0 100px rgba(212,175,55,.035), inset 0 0 80px rgba(212,175,55,.02);
+            opacity: .55;
+            will-change: transform;
+        }
+
+        .magic-bg-ring::before {
+            content: "";
+            position: absolute;
+            inset: 17%;
+            border: 1px solid rgba(245,230,171,.045);
+            border-radius: 50%;
+        }
+
+        .magic-bg-ring::after {
+            content: "";
+            position: absolute;
+            inset: 35%;
+            border: 1px dashed rgba(212,175,55,.045);
+            border-radius: 50%;
+        }
+
+        .magic-prop {
+            position: absolute;
+            transform-style: preserve-3d;
+            will-change: transform, opacity;
+            user-select: none;
+            -webkit-user-drag: none;
+            filter: drop-shadow(0 18px 28px rgba(0,0,0,.34));
+        }
+
+        .magic-prop img {
+            display: block;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            transform-style: preserve-3d;
+        }
+
+        .magic-hat-prop {
+            width: clamp(150px, 18vw, 280px);
+            left: 72%;
+            top: 18%;
+            opacity: .72;
+        }
+
+        .magic-pigeon-left {
+            width: clamp(130px, 16vw, 250px);
+            left: -3%;
+            top: 27%;
+            opacity: .62;
+        }
+
+        .magic-pigeon-right {
+            width: clamp(125px, 15vw, 235px);
+            right: -2%;
+            top: 58%;
+            opacity: .58;
+        }
+
+        @media (max-width: 768px) {
+            .magic-bg-glow {
+                width: 92vw;
+                filter: blur(25px);
+            }
+
+            .magic-bg-ring {
+                width: 112vw;
+                opacity: .35;
+            }
+
+            .magic-hat-prop {
+                width: 125px;
+                left: 67%;
+                top: 16%;
+                opacity: .52;
+            }
+
+            .magic-pigeon-left {
+                width: 105px;
+                left: -9%;
+                top: 25%;
+                opacity: .45;
+            }
+
+            .magic-pigeon-right {
+                width: 100px;
+                right: -8%;
+                top: 57%;
+                opacity: .42;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #magic-3d-background {
+                display: none !important;
+            }
+        }
+
     </style>
 </head>
 
 <body class="selection:bg-gold selection:text-black text-left rtl:text-right">
 
-    <!-- 3D Three.js Interactive WebGL Background Canvas -->
-    <div id="threeJsCanvasContainer" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-40 dark:opacity-60 transition-opacity duration-1000"></div>
+
+
+    <!-- Fixed 3D Magic Atmosphere: uses the supplied pigeon + hat artwork -->
+    <div id="magic-3d-background" aria-hidden="true">
+        <div class="magic-bg-glow"></div>
+        <div class="magic-bg-ring"></div>
+
+        <div class="magic-prop magic-hat-prop">
+            <img src="images/magic-hat.png" alt="" loading="lazy">
+        </div>
+
+        <div class="magic-prop magic-pigeon-left">
+            <img src="images/left-pigeon.png" alt="" loading="lazy">
+        </div>
+
+        <div class="magic-prop magic-pigeon-right">
+            <img src="images/right piegion.png" alt="" loading="lazy">
+        </div>
+    </div>
 
     <!-- Floating WhatsApp Button -->
     <a href="https://wa.me/919387614714" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Magician Sajan"
@@ -187,6 +374,7 @@
             </nav>
 
             <div class="flex items-center gap-2">
+                <!-- Dropdown Language Selector -->
                 <div class="relative flex items-center">
                     <i class="fas fa-globe text-gold text-xs absolute left-3 rtl:right-3 rtl:left-auto pointer-events-none"></i>
                     <select id="langSelector" class="h-8 pl-8 pr-6 rtl:pr-8 rtl:pl-6 rounded-full border border-[var(--border-glass)] bg-transparent text-[11px] font-semibold text-[var(--text-primary)] hover:border-gold transition-colors appearance-none cursor-pointer focus:outline-none focus:border-gold">
@@ -201,6 +389,7 @@
                     <i class="fas fa-chevron-down text-[8px] absolute right-3 rtl:left-3 rtl:right-auto pointer-events-none text-[var(--text-secondary)]"></i>
                 </div>
 
+                <!-- Theme Toggle -->
                 <button id="themeToggleBtn" class="w-8 h-8 rounded-full border border-[var(--border-glass)] flex items-center justify-center text-xs text-[var(--text-primary)] hover:border-gold transition-colors" title="Toggle Light/Dark Theme">
                     <i class="fas fa-sun hidden dark:inline text-gold"></i>
                     <i class="fas fa-moon inline dark:hidden text-[var(--text-primary)]"></i>
@@ -227,13 +416,16 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="relative min-h-[100vh] flex items-center justify-center overflow-hidden pt-20 px-6 bg-[var(--bg-body)]">
+    <!-- Hero Section (Premium Clean Look) -->
+    <section id="home" class="relative min-h-[100vh] flex items-center justify-center overflow-hidden pt-20 px-6 bg-black">
         <div class="absolute inset-0 w-full h-[120%] -top-[10%] overflow-hidden pointer-events-none z-0 parallax-media">
-            <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-25 dark:opacity-35 scale-105 transition-opacity duration-700">
+            <!-- Premium Magic Video Background -->
+            <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-50 scale-105 transition-opacity duration-700">
                 <source src="https://www.image2url.com/r2/default/videos/1790162941470-f4148400-3560-4b7a-82f2-826a36481dc1.mp4" type="video/mp4">
             </video>
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--bg-body)]/80 to-[var(--bg-body)] pointer-events-none"></div>
+            <!-- Smooth Vignette/Gradient Overlay for perfect text readability -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/80 pointer-events-none"></div>
+            <div class="absolute inset-0 bg-black/30 pointer-events-none"></div>
         </div>
 
         <div class="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center mt-8">
@@ -242,13 +434,13 @@
                 <span data-i18n="hero_pill">20+ Years Stage Excellence</span>
             </div>
 
-            <h1 class="gsap-hero-elem text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.05] mb-5 apple-title-gradient">
+            <h1 class="gsap-hero-elem text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.05] mb-5 apple-title-gradient drop-shadow-xl">
                 <span data-i18n="hero_title_1">Magician Sajan.</span><br>
                 <span class="gold-gradient-text" data-i18n="hero_title_2">Pure Impossible.</span>
             </h1>
 
-            <p class="gsap-hero-elem max-w-xl text-base sm:text-lg md:text-xl text-[var(--text-secondary)] font-medium leading-relaxed mb-8" data-i18n="hero_desc">
-                From auditorium grand illusions to high-touch psychological mentalism for India’s finest galas, weddings, and corporate summits.
+            <p class="gsap-hero-elem max-w-xl text-base sm:text-lg md:text-xl text-[var(--text-primary)] font-medium leading-relaxed mb-8 drop-shadow-md" data-i18n="hero_desc">
+                From grand stage illusions and escape artistry to motivational speaking, Magician Sajan brings engaging live experiences to galas, weddings, corporate events, and public gatherings across Kerala and India.
             </p>
 
             <div class="gsap-hero-elem flex flex-wrap items-center justify-center gap-4">
@@ -306,7 +498,7 @@
         </div>
     </section>
 
-    <!-- UI FIX: Main Media Showcase Carousel -->
+    <!-- Main Media Showcase Carousel -->
     <section id="media" class="py-24 px-5 relative z-10 parallax-section">
         <div class="max-w-6xl mx-auto">
             <div class="text-center max-w-xl mx-auto mb-14 gsap-fade-up">
@@ -379,7 +571,6 @@
             </div>
             
             <div id="imgGalleryScroll" class="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pb-6 no-scrollbar px-1 scroll-smooth touch-pan-y gsap-stagger-container">
-                <!-- GSAP Wrappers isolate animation from Tilt -->
                 <div class="gsap-stagger-item shrink-0">
                     <div class="w-[70vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[4/5] border border-[var(--border-glass)] group" data-tilt data-tilt-max="3">
                         <img src="images/sajanimage1.jpeg" alt="Magician Sajan Performance" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -420,11 +611,46 @@
                         <img src="images/sajanimage8.jpeg" alt="Magician Sajan Performance" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                     </div>
                 </div>
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[70vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[4/5] border border-[var(--border-glass)] group" data-tilt data-tilt-max="3">
+                        <img src="images/sajan-pics1.JPG" alt="Magician Sajan Performance 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                </div>
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[70vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[4/5] border border-[var(--border-glass)] group" data-tilt data-tilt-max="3">
+                        <img src="images/sajan-pics2.JPG" alt="Magician Sajan Performance 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                </div>
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[70vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[4/5] border border-[var(--border-glass)] group" data-tilt data-tilt-max="3">
+                        <img src="images/sajan-pics3.JPG" alt="Magician Sajan Performance 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                </div>
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[70vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[4/5] border border-[var(--border-glass)] group" data-tilt data-tilt-max="3">
+                        <img src="images/sajan-pics4.JPG" alt="Magician Sajan Performance 4" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                </div>
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[70vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[4/5] border border-[var(--border-glass)] group" data-tilt data-tilt-max="3">
+                        <img src="images/sajan-pics5.JPG" alt="Magician Sajan Performance 5" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                </div>
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[70vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[4/5] border border-[var(--border-glass)] group" data-tilt data-tilt-max="3">
+                        <img src="images/sajan-pics6.JPG" alt="Magician Sajan Performance 6" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                </div>
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[70vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[4/5] border border-[var(--border-glass)] group" data-tilt data-tilt-max="3">
+                        <img src="images/sajan-pics7.JPG" alt="Magician Sajan Performance 7" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Vertical Video Gallery (Mobile Scroll Snap / Desktop Grid) -->
+    <!-- NEW Vertical Video Gallery (Fully Swipeable Carousel with 9 Videos) -->
     <section id="gallery" class="py-24 px-5 relative z-10 border-t border-[var(--border-glass)] parallax-section">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
@@ -432,7 +658,7 @@
                     <span class="text-xs uppercase tracking-widest text-gold font-bold mb-2 block" data-i18n="gallery_tag">The Vault</span>
                     <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight apple-title-gradient" data-i18n="gallery_heading">Moments of Magic</h2>
                 </div>
-                <div class="flex items-center justify-center sm:justify-end gap-2 shrink-0 md:hidden">
+                <div class="flex items-center justify-center sm:justify-end gap-2 shrink-0">
                     <button id="vidGalleryPrevBtn" class="w-10 h-10 rounded-full apple-glass flex items-center justify-center text-[var(--text-primary)] hover:border-gold hover:text-gold transition-all" aria-label="Previous Videos">
                         <i class="fas fa-chevron-left text-xs rtl:rotate-180"></i>
                     </button>
@@ -442,45 +668,114 @@
                 </div>
             </div>
             
-            <div id="vidGalleryScroll" class="flex md:grid md:grid-cols-4 overflow-x-auto snap-x snap-mandatory gap-4 md:gap-5 pb-8 no-scrollbar px-1 scroll-smooth touch-pan-y gsap-stagger-container">
+            <!-- Pure flex-based horizontal scroll layout ensures identical carousel behavior everywhere -->
+            <div id="vidGalleryScroll" class="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-5 pb-8 no-scrollbar px-1 scroll-smooth touch-pan-y gsap-stagger-container">
+                <!-- Video Item 1 -->
                 <div class="gsap-stagger-item shrink-0">
-                    <div class="w-[60vw] sm:w-[45vw] md:w-auto snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)]" data-tilt data-tilt-max="5">
-                        <video autoplay loop muted playsinline class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                             <source src="https://www.image2url.com/r2/default/videos/1790515604626-e4523edc-44b6-4340-a0d4-d25864734c78.mp4" type="video/mp4">
                         </video>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5 pointer-events-none">
-                            <i class="fas fa-play text-white/80 text-3xl drop-shadow-md"></i>
-                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
                     </div>
                 </div>
+                <!-- Video Item 2 -->
                 <div class="gsap-stagger-item shrink-0">
-                    <div class="w-[60vw] sm:w-[45vw] md:w-auto snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)]" data-tilt data-tilt-max="5">
-                        <video autoplay loop muted playsinline class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                             <source src="https://www.image2url.com/r2/default/videos/1790515685802-a02ad5bf-b114-42ff-9027-b8db30dd2d28.mp4" type="video/mp4">
                         </video>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5 pointer-events-none">
-                            <i class="fas fa-play text-white/80 text-3xl drop-shadow-md"></i>
-                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
                     </div>
                 </div>
+                <!-- Video Item 3 -->
                 <div class="gsap-stagger-item shrink-0">
-                    <div class="w-[60vw] sm:w-[45vw] md:w-auto snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)]" data-tilt data-tilt-max="5">
-                        <video autoplay loop muted playsinline class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                             <source src="https://www.image2url.com/r2/default/videos/1790515742642-cc6af9ca-af14-4b3c-b4be-b6b8559432f1.mp4" type="video/mp4">
                         </video>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5 pointer-events-none">
-                            <i class="fas fa-play text-white/80 text-3xl drop-shadow-md"></i>
-                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
                     </div>
                 </div>
+                <!-- Video Item 4 -->
                 <div class="gsap-stagger-item shrink-0">
-                    <div class="w-[60vw] sm:w-[45vw] md:w-auto snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)]" data-tilt data-tilt-max="5">
-                        <video autoplay loop muted playsinline class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                             <source src="https://www.image2url.com/r2/default/videos/1790515828061-f49ee658-20fb-41ad-a0ea-200699fb4ce4.mp4" type="video/mp4">
                         </video>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5 pointer-events-none">
-                            <i class="fas fa-play text-white/80 text-3xl drop-shadow-md"></i>
-                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Video Item 5 (NEW) -->
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <source src="https://www.image2url.com/r2/default/videos/1790923973332-9cea4dfe-97e2-4518-90c3-b2bacedb7b55.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Video Item 6 (NEW) -->
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <source src="https://www.image2url.com/r2/default/videos/1790924023281-49134088-0e47-4149-aaba-b00be54349a6.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Video Item 7 (NEW) -->
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <source src="https://www.image2url.com/r2/default/videos/1790924055521-7408300d-3b2f-48fc-a3fd-df5ed1762acc.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Video Item 8 (NEW) -->
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <source src="https://www.image2url.com/r2/default/videos/1790924080127-23746212-5021-4312-b179-7df3e10be7a1.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Video Item 9 (NEW) -->
+                <div class="gsap-stagger-item shrink-0">
+                    <div class="w-[60vw] sm:w-[45vw] md:w-[30vw] lg:w-[22vw] snap-center rounded-2xl overflow-hidden apple-glass aspect-[9/16] relative group border border-[var(--border-glass)] bg-black" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                        <video loop muted playsinline preload="metadata" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <source src="https://www.image2url.com/r2/default/videos/1790924136909-0f6bbb3b-f4e4-49fc-8095-444da085a1e2.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        <button class="mute-btn absolute top-3 right-3 text-white/80 bg-black/40 hover:bg-black/60 w-8 h-8 flex items-center justify-center rounded-full z-20 transition-colors" aria-label="Toggle Sound">
+                            <i class="fas fa-volume-mute text-xs"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -502,7 +797,7 @@
                             <img src="images/sajanpeacock.jpg" alt="Sajan Portrait" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                             <div class="absolute bottom-6 left-6 right-6 rtl:text-right text-left">
-                                <span class="text-[10px] text-gold uppercase font-bold tracking-widest" data-i18n="about_role">Professional Illusionist & Mentalist</span>
+                                <span class="text-[10px] text-gold uppercase font-bold tracking-widest" data-i18n="about_role">Professional Magician • Illusionist • Escape Artist • Motivational Speaker</span>
                                 <h3 class="text-3xl font-extrabold text-white tracking-tight mt-1">Magician Sajan</h3>
                                 <p class="text-xs font-medium text-gray-300 mt-2 flex items-center rtl:justify-end gap-2" data-i18n="about_origin">
                                     <i class="fas fa-map-marker-alt text-gold"></i> Nanniode, Palakkad • Nationwide
@@ -517,10 +812,10 @@
                         <div class="h-full rounded-3xl apple-glass p-8 sm:p-12 flex flex-col justify-center">
                             <h4 class="text-2xl font-extrabold mb-4 tracking-tight gold-gradient-text" data-i18n="story_title">16 Years of Unmatched Stage Craft</h4>
                             <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed mb-5 font-medium" data-i18n="story_p1">
-                                With over 16 years of dedicated performance across India, Sajan redefines modern magic by weaving theatrical grandeur with spontaneous crowd engagement.
+                                With over 20 years of dedicated performance across India, Sajan redefines modern magic by weaving theatrical grandeur with spontaneous crowd engagement.
                             </p>
                             <p class="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed font-medium" data-i18n="story_p2">
-                                His repertoire merges sleight-of-hand mastery, impossible psychological thought-reading, and scale illusions tailored for international corporate conclaves, grand destination weddings, and festive galas.
+                                His repertoire brings together stage magic, visual illusions, escape artistry, audience participation, and motivational storytelling, with formats tailored for corporate events, weddings, celebrations, and large-stage shows.
                             </p>
                         </div>
                     </div>
@@ -529,8 +824,8 @@
                         <div class="gsap-stagger-item">
                             <div class="h-full rounded-2xl apple-glass p-6 text-center hover:border-gold transition-colors flex flex-col justify-center" data-tilt data-tilt-max="10">
                                 <i class="fas fa-brain text-gold text-2xl mb-3"></i>
-                                <h5 class="text-xs font-extrabold uppercase tracking-wider text-[var(--text-primary)]" data-i18n="feat_1">Mentalism</h5>
-                                <p class="text-[11px] text-[var(--text-secondary)] mt-1.5 font-medium" data-i18n="feat_1_sub">Mind Reading Feats</p>
+                                <h5 class="text-xs font-extrabold uppercase tracking-wider text-[var(--text-primary)]" data-i18n="feat_1">Illusion Magic</h5>
+                                <p class="text-[11px] text-[var(--text-secondary)] mt-1.5 font-medium" data-i18n="feat_1_sub">Visual & Interactive Illusions</p>
                             </div>
                         </div>
                         <div class="gsap-stagger-item">
@@ -553,14 +848,14 @@
         </div>
     </section>
 
-    <!-- UI FIX: Show Packages (Equal Heights, No Animation Conflicts) -->
+    <!-- Show Packages -->
     <section id="packages" class="py-24 px-5 relative z-10 border-t border-[var(--border-glass)] parallax-section">
         <div class="max-w-6xl mx-auto">
             <div class="text-center max-w-xl mx-auto mb-16 gsap-fade-up">
-                <span class="text-xs uppercase tracking-widest text-gold font-bold mb-2 block" data-i18n="packages_tag">Custom Experiences</span>
+                <span class="text-xs uppercase tracking-widest text-gold font-bold mb-2 block" data-i18n="packages_tag">Signature Experiences</span>
                 <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight apple-title-gradient" data-i18n="packages_heading">Tailored Show Packages</h2>
                 <p class="text-sm sm:text-base text-[var(--text-secondary)] mt-4 font-medium" data-i18n="packages_sub">
-                    Specially engineered formats designed to blend seamlessly with your itinerary.
+                    Thoughtfully crafted performance formats built around your audience, venue, event schedule, and desired experience.
                 </p>
             </div>
 
@@ -574,14 +869,14 @@
                                 <i class="fas fa-briefcase"></i>
                             </div>
                             <span class="text-[10px] font-bold text-gold uppercase tracking-widest" data-i18n="pkg1_tag">Corporate Gala</span>
-                            <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg1_title">The Executive Keynote</h3>
+                            <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg1_title">Magic & Motivation Experience</h3>
                             <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 font-medium" data-i18n="pkg1_desc">
-                                Transform corporate annual summits, awards banquets, and product launches with customized magical reveals integrated with brand values.
+                                A polished combination of stage magic, audience interaction, and motivational storytelling designed for corporate gatherings, conferences, award nights, and special events.
                             </p>
                             <ul class="text-xs font-semibold text-[var(--text-secondary)] space-y-3 mb-8">
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f1">Customized Product Reveals</span></li>
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f2">Leadership Mind-Reading</span></li>
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f3">High-Impact Theatrical Staging</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f1">Interactive Stage Magic</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f2">Interactive Magic & Audience Participation</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg1_f3">Motivational Storytelling</span></li>
                             </ul>
                         </div>
                         <a href="#contact" class="mt-auto w-full py-3.5 rounded-full border border-[var(--border-glass)] hover:bg-gold hover:text-[var(--bg-body)] text-center text-[var(--text-primary)] text-xs font-bold uppercase tracking-wider transition-colors" data-i18n="btn_inquire_pkg">
@@ -599,14 +894,14 @@
                                 <i class="fas fa-gem"></i>
                             </div>
                             <span class="text-[10px] font-bold text-gold uppercase tracking-widest" data-i18n="pkg2_tag">Weddings & Sangeet</span>
-                            <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg2_title">Royal Wedding Enchantment</h3>
+                            <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg2_title">Wedding Magic Experience</h3>
                             <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 font-medium" data-i18n="pkg2_desc">
-                                Mesmerize high-profile wedding guests with interactive walkaround table magic during cocktails, followed by a romantic stage climax.
+                                Create memorable wedding moments with elegant close-up magic, interactive stage illusions, and special moments designed for couples, families, and guests.
                             </p>
                             <ul class="text-xs font-semibold text-[var(--text-secondary)] space-y-3 mb-8">
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f1">Cocktail Hour Walkaround Sleights</span></li>
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f2">Bride & Groom Special Illusion</span></li>
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f3">Table-to-Table Interactive Marvels</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f1">Close-Up Magic for Guests</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f2">Special Couple Illusion</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg2_f3">Interactive Guest Experiences</span></li>
                             </ul>
                         </div>
                         <a href="#contact" class="mt-auto w-full py-3.5 rounded-full bg-gold hover:bg-[#b8952b] text-black text-center text-xs font-bold uppercase tracking-wider transition-colors shadow-lg shadow-gold/25" data-i18n="btn_inquire_pkg">
@@ -623,14 +918,14 @@
                                 <i class="fas fa-magic"></i>
                             </div>
                             <span class="text-[10px] font-bold text-gold uppercase tracking-widest" data-i18n="pkg3_tag">Mega Auditorium</span>
-                            <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg3_title">The Grand Spectacle</h3>
+                            <h3 class="text-xl font-extrabold tracking-tight mt-2 mb-3 text-[var(--text-primary)]" data-i18n="pkg3_title">Grand Magic & Escape Show</h3>
                             <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 font-medium" data-i18n="pkg3_desc">
-                                Full-scale stage magic featuring breathtaking levitations, instant teleportations, escapology, and theatrical wonder for large audiences.
+                                A full-scale theatrical show combining grand illusions, escape artistry, audience participation, suspense, and motivational moments for large audiences.
                             </p>
                             <ul class="text-xs font-semibold text-[var(--text-secondary)] space-y-3 mb-8">
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f1">Levitation & Teleportation Staging</span></li>
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f2">Mega Escapology & Suspense Feats</span></li>
-                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f3">Professional Sound & Lighting Sync</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f1">Grand Stage Illusions</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f2">Escape Artist Performance</span></li>
+                                <li class="flex items-start gap-2.5"><i class="fas fa-check text-gold mt-0.5"></i> <span data-i18n="pkg3_f3">Theatrical Show Presentation</span></li>
                             </ul>
                         </div>
                         <a href="#contact" class="mt-auto w-full py-3.5 rounded-full border border-[var(--border-glass)] hover:bg-gold hover:text-[var(--bg-body)] text-center text-[var(--text-primary)] text-xs font-bold uppercase tracking-wider transition-colors" data-i18n="btn_inquire_pkg">
@@ -715,7 +1010,7 @@
         </div>
     </section>
 
-    <!-- Booking Form UI FIX (Wrapped Data-Tilt) -->
+    <!-- Booking Form -->
     <section id="contact" class="py-24 px-5 relative z-10 border-t border-[var(--border-glass)] parallax-section">
         <div class="max-w-4xl mx-auto">
             <div class="text-center max-w-xl mx-auto mb-14 gsap-fade-up">
@@ -726,7 +1021,6 @@
                 </p>
             </div>
 
-            <!-- GSAP Outer Wrap, Tilt Inner Wrap -->
             <div class="gsap-scale-up">
                 <div class="rounded-3xl apple-glass p-8 sm:p-12 border border-[var(--border-glass)] shadow-2xl text-left rtl:text-right" data-tilt data-tilt-max="1" data-tilt-glare="true" data-tilt-max-glare="0.1">
                     <form id="bookingForm" class="space-y-6 relative z-10">
@@ -754,9 +1048,12 @@
                                 </select>
                             </div>
 
-                            <div>
-                                <label class="block text-[11px] uppercase tracking-wider font-bold text-[var(--text-secondary)] mb-2" data-i18n="label_date">Target Date & Location *</label>
-                                <input type="text" id="eventDateLoc" required data-i18n-placeholder="ph_date" placeholder="e.g. 25 Oct, Kochi / Palakkad" class="w-full px-5 py-4 rounded-xl apple-input text-sm font-medium">
+                            <div class="col-span-1 min-w-0">
+                                <label class="block w-full text-[11px] uppercase tracking-wider font-bold text-[var(--text-secondary)] mb-2 leading-relaxed" data-i18n="label_date">Target Date & Location *</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-w-0">
+                                    <input type="date" id="eventDate" required class="w-full min-w-0 max-w-full box-border px-5 py-4 rounded-xl apple-input text-sm font-medium">
+                                    <input type="text" id="eventLoc" required data-i18n-placeholder="ph_loc" placeholder="e.g. Kochi / Palakkad" class="w-full min-w-0 max-w-full box-border px-5 py-4 rounded-xl apple-input text-sm font-medium">
+                                </div>
                             </div>
                         </div>
 
@@ -793,7 +1090,7 @@
                         <span>Magician Sajan</span>
                     </a>
                     <p class="text-[13px] leading-relaxed font-medium text-[var(--text-secondary)]" data-i18n="footer_brand_desc">
-                        Creating unforgettable, mind-defying illusions and psychological mentalism for corporate summits, luxury weddings, and stage spectacles across India.
+                        Creating unforgettable magic, illusion, escape artistry, and motivational experiences for corporate events, weddings, celebrations, and stage shows across India.
                     </p>
                     <div class="flex items-center gap-3 pt-2">
                         <a href="https://share.google/Vb6fmC5okCD2XMjJn" target="_blank" class="w-9 h-9 rounded-full border border-[var(--border-glass)] bg-transparent flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" aria-label="Google Profile"><i class="fab fa-google"></i></a>
@@ -818,7 +1115,7 @@
                 <div class="space-y-4 text-left rtl:text-right">
                     <h4 class="text-[11px] font-extrabold uppercase tracking-widest text-[var(--text-primary)]" data-i18n="footer_col_shows">Performance Acts</h4>
                     <ul class="space-y-3 font-semibold text-[13px] text-[var(--text-secondary)]">
-                        <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="feat_1">Mentalism</a></li>
+                        <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="feat_1">Illusion Magic</a></li>
                         <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="pkg1_tag">Corporate Gala</a></li>
                         <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="pkg2_tag">Weddings & Sangeet</a></li>
                         <li><a href="#packages" class="hover:text-gold transition-colors" data-i18n="pkg3_tag">Mega Auditorium</a></li>
@@ -854,198 +1151,79 @@
         </div>
     </footer>
 
-    <!-- Interactive Scripts: Three.js, GSAP, Full i18n Dictionary -->
+    <!-- Interactive Scripts: GSAP, Carousel, Form Logic, i18n Dictionary -->
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
 
         /* =========================================================================
-           1. Three.js - MAGIC THEME Background (Wand, Pigeon Bird, Cards & Sparks)
-           ========================================================================= */
-        (function initThreeJSMagic() {
-            const container = document.getElementById('threeJsCanvasContainer');
-            if (!container || typeof THREE === 'undefined') return;
-
-            const scene = new THREE.Scene();
-            window.threeScene = scene; 
-            
-            const initialTheme = document.documentElement.getAttribute('data-theme');
-            scene.fog = new THREE.FogExp2(initialTheme === 'dark' ? 0x000000 : 0xF5F5F7, 0.002);
-            
-            const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 50;
-
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            container.appendChild(renderer.domElement);
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-            scene.add(ambientLight);
-            const dirLight = new THREE.DirectionalLight(0xffdf80, 1.5);
-            dirLight.position.set(10, 20, 10);
-            scene.add(dirLight);
-
-            // Magic Sparks
-            const particleCount = 350;
-            const pGeo = new THREE.BufferGeometry();
-            const pPos = new Float32Array(particleCount * 3);
-            for (let i = 0; i < particleCount * 3; i += 3) {
-                pPos[i] = (Math.random() - 0.5) * 200;
-                pPos[i + 1] = (Math.random() - 0.5) * 200;
-                pPos[i + 2] = (Math.random() - 0.5) * 100;
-            }
-            pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-            const pMat = new THREE.PointsMaterial({ color: 0xE5B958, size: 0.8, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending });
-            const particles = new THREE.Points(pGeo, pMat);
-            scene.add(particles);
-
-            // 3D Magic Wand
-            const wandGroup = new THREE.Group();
-            const stickGeo = new THREE.CylinderGeometry(0.4, 0.5, 20, 32);
-            const stickMat = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
-            const stick = new THREE.Mesh(stickGeo, stickMat);
-            wandGroup.add(stick);
-            
-            const tipGeo = new THREE.CylinderGeometry(0.38, 0.4, 3, 32);
-            const tipMat = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 80 });
-            const topTip = new THREE.Mesh(tipGeo, tipMat); topTip.position.y = 11.5; wandGroup.add(topTip);
-            const botTip = new THREE.Mesh(tipGeo, tipMat); botTip.position.y = -11.5; wandGroup.add(botTip);
-
-            const orbGeo = new THREE.SphereGeometry(1.5, 32, 32);
-            const orbMat = new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
-            const magicOrb = new THREE.Mesh(orbGeo, orbMat); magicOrb.position.y = 14; wandGroup.add(magicOrb);
-
-            const wandLight = new THREE.PointLight(0xffd700, 2, 50); wandLight.position.y = 14; wandGroup.add(wandLight);
-            wandGroup.position.set(20, 5, -10); wandGroup.rotation.z = Math.PI / 6; scene.add(wandGroup);
-
-            // 3D Magical Pigeons (Origami Style Birds)
-            const pigeons = [];
-            function createPigeon() {
-                const pigeon = new THREE.Group();
-                const bodyGeo = new THREE.ConeGeometry(0.8, 3.5, 4);
-                const birdMat = new THREE.MeshStandardMaterial({ color: 0xD4AF37, flatShading: true, roughness: 0.3, metalness: 0.8 });
-                const birdBody = new THREE.Mesh(bodyGeo, birdMat);
-                birdBody.rotation.x = Math.PI / 2;
-                pigeon.add(birdBody);
-
-                const wingGeo = new THREE.ConeGeometry(1.2, 3.5, 3);
-                const leftWing = new THREE.Mesh(wingGeo, birdMat);
-                leftWing.position.set(-1.0, 0.2, 0); leftWing.rotation.z = Math.PI / 2; leftWing.rotation.y = Math.PI / 8;
-
-                const rightWing = new THREE.Mesh(wingGeo, birdMat);
-                rightWing.position.set(1.0, 0.2, 0); rightWing.rotation.z = -Math.PI / 2; rightWing.rotation.y = -Math.PI / 8;
-
-                pigeon.add(leftWing); pigeon.add(rightWing);
-                pigeon.scale.setScalar(1.5);
-                pigeon.userData = { wingL: leftWing, wingR: rightWing, speed: Math.random() * 0.015 + 0.01, angle: Math.random() * Math.PI * 2, radius: Math.random() * 10 + 10, yOffset: (Math.random() - 0.5) * 15, flapSpeed: Math.random() * 5 + 10 };
-                return pigeon;
-            }
-
-            for(let i=0; i<4; i++) {
-                const bird = createPigeon();
-                scene.add(bird); pigeons.push(bird);
-            }
-
-            // Floating Cards
-            const cards = [];
-            const cardGeo = new THREE.PlaneGeometry(3.5, 5);
-            const cardMat = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide, shininess: 30 });
-            for(let i=0; i<35; i++) {
-                const card = new THREE.Mesh(cardGeo, cardMat);
-                card.position.set((Math.random() - 0.5) * 120, (Math.random() - 0.5) * 150, (Math.random() - 0.5) * 60 - 20);
-                card.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-                card.userData = { rotSpeedX: (Math.random() - 0.5) * 0.02, rotSpeedY: (Math.random() - 0.5) * 0.03, floatSpeed: Math.random() * 0.05 + 0.02 };
-                scene.add(card); cards.push(card);
-            }
-
-            let mouseX = 0, mouseY = 0, targetScrollY = 0, currentScrollY = 0;
-            window.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth - 0.5) * 2; mouseY = (e.clientY / window.innerHeight - 0.5) * 2; });
-            window.addEventListener('scroll', () => { targetScrollY = window.scrollY; });
-            const clock = new THREE.Clock();
-
-            function animate() {
-                requestAnimationFrame(animate);
-                const time = clock.getElapsedTime();
-                currentScrollY += (targetScrollY - currentScrollY) * 0.1;
-                
-                camera.position.y = -(currentScrollY * 0.04) + (-mouseY * 5);
-                camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
-                camera.lookAt(scene.position);
-                
-                particles.rotation.y = time * 0.05; particles.rotation.x = time * 0.02;
-                
-                wandGroup.position.y = Math.sin(time * 2) * 2 + 5 - (currentScrollY * 0.02);
-                wandGroup.rotation.x = Math.sin(time * 1.5) * 0.2; wandGroup.rotation.y = time * 0.5;
-                magicOrb.scale.setScalar(1 + Math.sin(time * 5) * 0.2); wandLight.intensity = 2 + Math.sin(time * 8) * 1;
-
-                pigeons.forEach(p => {
-                    p.userData.angle += p.userData.speed;
-                    p.position.x = wandGroup.position.x + Math.cos(p.userData.angle) * p.userData.radius;
-                    p.position.z = wandGroup.position.z + Math.sin(p.userData.angle) * p.userData.radius;
-                    p.position.y = wandGroup.position.y + Math.sin(p.userData.angle * 2) * 2 + p.userData.yOffset;
-                    
-                    p.rotation.y = -p.userData.angle + Math.PI; 
-                    p.rotation.z = Math.sin(p.userData.angle * 2) * 0.2; 
-                    p.userData.wingL.rotation.x = Math.sin(time * p.userData.flapSpeed) * 0.6;
-                    p.userData.wingR.rotation.x = -Math.sin(time * p.userData.flapSpeed) * 0.6;
-                });
-
-                cards.forEach(card => {
-                    card.rotation.x += card.userData.rotSpeedX; card.rotation.y += card.userData.rotSpeedY; card.position.y += card.userData.floatSpeed;
-                    if (card.position.y > camera.position.y + 80) card.position.y = camera.position.y - 80;
-                });
-                renderer.render(scene, camera);
-            }
-            animate();
-            window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
-        })();
-
-        /* =========================================================================
-           2. GSAP Animations
+           1. GSAP Animations & Video Observer
            ========================================================================= */
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
                 gsap.registerPlugin(ScrollTrigger);
                 gsap.from(".gsap-hero-elem", { y: 40, opacity: 0, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.2 });
-
-                gsap.utils.toArray('.parallax-media').forEach(media => { gsap.to(media, { yPercent: 30, ease: "none", scrollTrigger: { trigger: media.parentElement, start: "top bottom", end: "bottom top", scrub: true }}); });
                 gsap.utils.toArray('.parallax-inner').forEach(inner => { gsap.to(inner, { y: -40, ease: "none", scrollTrigger: { trigger: inner, start: "top bottom", end: "bottom top", scrub: true }}); });
                 gsap.utils.toArray('.parallax-inner-fast').forEach(inner => { gsap.to(inner, { y: -80, ease: "none", scrollTrigger: { trigger: inner, start: "top bottom", end: "bottom top", scrub: true }}); });
                 gsap.utils.toArray('.parallax-inner-reverse').forEach(inner => { gsap.to(inner, { y: 30, ease: "none", scrollTrigger: { trigger: inner, start: "top bottom", end: "bottom top", scrub: true }}); });
-
                 gsap.utils.toArray('.gsap-fade-up').forEach(elem => { gsap.from(elem, { scrollTrigger: { trigger: elem, start: "top 85%" }, y: 40, opacity: 0, duration: 1, ease: "power3.out" }); });
                 gsap.utils.toArray('.gsap-scale-up').forEach(elem => { gsap.from(elem, { scrollTrigger: { trigger: elem, start: "top 85%" }, y: 50, scale: 0.95, opacity: 0, duration: 1, ease: "power3.out" }); });
                 gsap.utils.toArray('.gsap-stagger-container').forEach(container => { gsap.from(container.querySelectorAll('.gsap-stagger-item'), { scrollTrigger: { trigger: container, start: "top 85%" }, y: 40, opacity: 0, duration: 0.8, stagger: 0.12, ease: "power2.out" }); });
             }
+
+            // Set Date Picker Minimum Date
+            const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+            const localISOTime = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+            document.getElementById('eventDate').min = localISOTime;
+
+            // Video Intersection Observer (Only play visible videos)
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const vid = entry.target;
+                    if (entry.isIntersecting) { vid.play().catch(()=>{}); } else { vid.pause(); }
+                });
+            }, { threshold: 0.3 });
+            
+            document.querySelectorAll('#gallery video').forEach(v => {
+                videoObserver.observe(v);
+                const btn = v.parentElement.querySelector('.mute-btn');
+                if(btn) {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        v.muted = !v.muted;
+                        btn.innerHTML = v.muted ? '<i class="fas fa-volume-mute text-xs"></i>' : '<i class="fas fa-volume-up text-xs"></i>';
+                    });
+                }
+            });
+
             applyLanguage(currentLang);
         });
 
         /* =========================================================================
-           3. Translation Dictionary
+           2. Translation Dictionary
            ========================================================================= */
         const i18n = {
             en: {
                 nav_home: "Home", nav_about: "About", nav_media: "Showcase", nav_gallery: "Gallery", nav_packages: "Shows", nav_location: "Location", nav_contact: "Bookings", btn_google: "Google Profile",
                 hero_pill: "20+ Years Stage Excellence", hero_title_1: "Magician Sajan.", hero_title_2: "Pure Impossible.",
-                hero_desc: "From auditorium grand illusions to high-touch psychological mentalism for India’s finest galas, weddings, and corporate summits.",
+                hero_desc: "From grand stage illusions and escape artistry to motivational speaking, Magician Sajan brings engaging live experiences to galas, weddings, corporate events, and public gatherings across Kerala and India.",
                 btn_book_now: "Book Performance", btn_quick_wa: "WhatsApp Now",
                 mq_corp: "Corporate Summits", mq_wed: "Royal Weddings", mq_tv: "TV Appearances", mq_award: "Award Galas", mq_celeb: "Celebrity Events", mq_fest: "College Fests",
                 stat_years: "Years Active", stat_shows: "Shows Delivered", stat_faces: "Audience Members", stat_satisfaction: "Delight Rating",
                 carousel_tag: "Visual Chronicle", carousel_heading: "Stage & Media Showcase", carousel_sub: "Explore high-resolution captures and live theatrical performance teasers.",
                 gallery_tag: "The Vault", gallery_heading: "Moments of Magic",
                 img_gallery_tag: "Captured Magic", img_gallery_heading: "Visual Archives",
-                about_tag: "The Philosophy", about_heading: "Crafting The Impossible", about_role: "Professional Illusionist & Mentalist",
-                about_origin: "Based in Nanniode, Palakkad • Nationwide", story_title: "16 Years of Unmatched Stage Craft",
-                story_p1: "With over 16 years of dedicated performance across India, Sajan redefines modern magic by weaving theatrical grandeur with spontaneous crowd engagement.",
-                story_p2: "His repertoire merges sleight-of-hand mastery, impossible psychological thought-reading, and scale illusions tailored for international corporate conclaves, grand destination weddings, and festive galas.",
-                feat_1: "Mentalism", feat_1_sub: "Mind Reading Feats", feat_2: "Close-Up", feat_2_sub: "Inches From Eyes", feat_3: "Grand Stage", feat_3_sub: "Spectacles for 1000s",
-                packages_tag: "Custom Experiences", packages_heading: "Tailored Show Packages", packages_sub: "Specially engineered formats designed to blend seamlessly with your itinerary.",
-                pkg1_tag: "Corporate Gala", pkg1_title: "The Executive Keynote", pkg1_desc: "Transform corporate annual summits, awards banquets, and product launches with customized magical reveals integrated with brand values.",
-                pkg1_f1: "Customized Product Reveals", pkg1_f2: "Leadership Mind-Reading", pkg1_f3: "High-Impact Theatrical Staging",
-                pkg_popular: "Most Popular", pkg2_tag: "Weddings & Sangeet", pkg2_title: "Royal Wedding Enchantment", pkg2_desc: "Mesmerize high-profile wedding guests with interactive walkaround table magic during cocktails, followed by a romantic stage climax.",
-                pkg2_f1: "Cocktail Hour Walkaround Sleights", pkg2_f2: "Bride & Groom Special Illusion", pkg2_f3: "Table-to-Table Interactive Marvels",
-                pkg3_tag: "Mega Auditorium", pkg3_title: "The Grand Spectacle", pkg3_desc: "Full-scale stage magic featuring breathtaking levitations, instant teleportations, escapology, and theatrical wonder for large audiences.",
-                pkg3_f1: "Levitation & Teleportation Staging", pkg3_f2: "Mega Escapology & Suspense Feats", pkg3_f3: "Professional Sound & Lighting Sync",
+                about_tag: "The Philosophy", about_heading: "Crafting The Impossible", about_role: "Professional Magician • Illusionist • Escape Artist • Motivational Speaker",
+                about_origin: "Based in Nanniode, Palakkad • Nationwide", story_title: "20 Years of Unmatched Stage Craft",
+                story_p1: "With over 20 years of dedicated performance across India, Sajan redefines modern magic by weaving theatrical grandeur with spontaneous crowd engagement.",
+                story_p2: "His repertoire brings together stage magic, visual illusions, escape artistry, audience participation, and motivational storytelling, with formats tailored for corporate events, weddings, celebrations, and large-stage shows.",
+                feat_1: "Illusion Magic", feat_1_sub: "Visual & Interactive Illusions", feat_2: "Close-Up", feat_2_sub: "Inches From Eyes", feat_3: "Grand Stage", feat_3_sub: "Spectacles for 1000s",
+                packages_tag: "Signature Experiences", packages_heading: "Tailored Show Packages", packages_sub: "Thoughtfully crafted performance formats built around your audience, venue, event schedule, and desired experience.",
+                pkg1_tag: "Corporate Gala", pkg1_title: "Magic & Motivation Experience", pkg1_desc: "A polished combination of stage magic, audience interaction, and motivational storytelling designed for corporate gatherings, conferences, award nights, and special events.",
+                pkg1_f1: "Interactive Stage Magic", pkg1_f2: "Interactive Magic & Audience Participation", pkg1_f3: "Motivational Storytelling",
+                pkg_popular: "Most Popular", pkg2_tag: "Weddings & Sangeet", pkg2_title: "Wedding Magic Experience", pkg2_desc: "Create memorable wedding moments with elegant close-up magic, interactive stage illusions, and special moments designed for couples, families, and guests.",
+                pkg2_f1: "Close-Up Magic for Guests", pkg2_f2: "Special Couple Illusion", pkg2_f3: "Interactive Guest Experiences",
+                pkg3_tag: "Mega Auditorium", pkg3_title: "Grand Magic & Escape Show", pkg3_desc: "A full-scale theatrical show combining grand illusions, escape artistry, audience participation, suspense, and motivational moments for large audiences.",
+                pkg3_f1: "Grand Stage Illusions", pkg3_f2: "Escape Artist Performance", pkg3_f3: "Theatrical Show Presentation",
                 btn_inquire_pkg: "Inquire Package",
                 loc_tag: "Headquarters & Availability", loc_heading: "Rooted in Kerala.<br>Performing Everywhere.", loc_desc: "Magician Sajan is proudly based out of Nanniode, Palakkad, frequently headlining prominent stage shows, resort galas, destination weddings, and corporate summits across India.",
                 hub_card_title: "Performance Operations", hub_card_sub: "Kerala • Tamil Nadu • Pan India", status_active: "Booking Active",
@@ -1054,15 +1232,15 @@
                 hub3_t: "Bespoke Destination Events", hub3_d: "All-India flight-accessible venues for multi-day corporate conventions & destination weddings.",
                 form_tag: "Event Inquiries", form_heading: "Reserve Your Date", form_sub: "Fill out the event details below to initiate instant booking on WhatsApp.",
                 label_name: "Your Name *", label_phone: "Phone / WhatsApp Number *", label_event_type: "Event Category *", label_date: "Target Date & Location *", label_notes: "Show Requirements / Special Requests", 
-                ph_name: "e.g. Rahul Sharma", ph_phone: "e.g. +91 98765 43210", ph_date: "e.g. 25 Oct, Kochi / Palakkad", ph_notes: "Tell us about the audience size, venue, or expected schedule...",
+                ph_name: "e.g. Rahul Sharma", ph_phone: "e.g. +91 98765 43210", ph_date: "e.g. 25 Oct, Kochi / Palakkad", ph_notes: "Tell us about the audience size, venue, or expected schedule...", ph_loc: "e.g. Kochi / Palakkad",
                 opt_corporate: "Corporate Summit / Gala", opt_wedding: "Royal Wedding / Sangeet", opt_vip: "Private VIP Gathering", opt_festival: "Festival / Mega Event", opt_other: "Other Inquiries",
                 privacy_note: "Direct instant dispatch to Magician Sajan's WhatsApp", btn_send_whatsapp: "Send Booking to WhatsApp",
-                footer_brand_desc: "Creating unforgettable, mind-defying illusions and psychological mentalism for corporate summits, luxury weddings, and stage spectacles across India.", 
+                footer_brand_desc: "Creating unforgettable magic, illusion, escape artistry, and motivational experiences for corporate events, weddings, celebrations, and stage shows across India.", 
                 footer_col_nav: "Navigation", footer_col_shows: "Performance Acts", footer_col_location: "Studio & Direct Line", footer_addr: "Nanniode, Palakkad,<br>Kerala, India - 678534", footer_top: "Back to Top"
             },
             ml: {
                 nav_home: "ഹോം", nav_about: "വിവരണം", nav_media: "ഷോകേസ്", nav_gallery: "ഗാലറി", nav_packages: "ഷോകള്‍", nav_location: "സ്ഥലം", nav_contact: "ബുക്കിംഗ്", btn_google: "ഗൂഗിൾ പ്രൊഫൈൽ",
-                hero_pill: "16-ലധികം വർഷത്തെ മാന്ത്രിക മികവ്", hero_title_1: "മാന്ത്രികൻ സാജൻ.", hero_title_2: "മാന്ത്രിക വിസ്മയം.",
+                hero_pill: "20-ലധികം വർഷത്തെ മാന്ത്രിക മികവ്", hero_title_1: "മാന്ത്രികൻ സാജൻ.", hero_title_2: "മാന്ത്രിക വിസ്മയം.",
                 hero_desc: "മെഗാ സ്റ്റേജ് ഇല്ല്യൂഷനുകൾ മുതൽ മനസ്സ് വായിക്കുന്ന അത്ഭുത വിദ്യകൾ വരെ, നിങ്ങളുടെ ആഘോഷങ്ങളെ അവിസ്മരണീയമാക്കുന്ന മാന്ത്രിക സാന്നിധ്യം.",
                 btn_book_now: "ഷോ ബുക്ക് ചെയ്യാം", btn_quick_wa: "വാട്സാപ്പ് ചെയ്യൂ",
                 mq_corp: "കോർപ്പറേറ്റ് മീറ്റുകൾ", mq_wed: "വിവാഹ സൽക്കാരങ്ങൾ", mq_tv: "ടിവി ഷോകള്‍", mq_award: "അവാർഡ് നിശകൾ", mq_celeb: "സെലിബ്രിറ്റി ഇവന്റുകൾ", mq_fest: "കോളേജ് ഫെസ്റ്റുകൾ",
@@ -1071,8 +1249,8 @@
                 gallery_tag: "ശേഖരം", gallery_heading: "മാന്ത്രിക നിമിഷങ്ങൾ",
                 img_gallery_tag: "ക്യാപ്ചർഡ് മാജിക്", img_gallery_heading: "ചിത്രശാല",
                 about_tag: "മാന്ത്രിക ദർശനം", about_heading: "അസാധ്യമായത് സാധ്യമാക്കുന്ന കല", about_role: "പ്രൊഫഷണൽ ഇല്ല്യൂഷനിസ്റ്റ് & മെന്റലിസ്റ്റ്",
-                about_origin: "നണ്ണിയോട്, പാലക്കാട് • ഇന്ത്യയൊട്ടാകെ", story_title: "16 വർഷത്തെ മാന്ത്രിക മികവ്",
-                story_p1: "കഴിഞ്ഞ 16 വർഷത്തിലേറെയായി ഇന്ത്യയൊട്ടാകെയുള്ള വേദികളിൽ തനതായ മാന്ത്രിക ശൈലികൊണ്ട് കാണികളെ വിസ്മയിപ്പിക്കുന്ന പ്രശസ്ത മാന്ത്രികനാണ് സാജൻ.",
+                about_origin: "നണ്ണിയോട്, പാലക്കാട് • ഇന്ത്യയൊട്ടാകെ", story_title: "20 വർഷത്തെ മാന്ത്രിക മികവ്",
+                story_p1: "കഴിഞ്ഞ 20 വർഷത്തിലേറെയായി ഇന്ത്യയൊട്ടാകെയുള്ള വേദികളിൽ തനതായ മാന്ത്രിക ശൈലികൊണ്ട് കാണികളെ വിസ്മയിപ്പിക്കുന്ന പ്രശസ്ത മാന്ത്രികനാണ് സാജൻ.",
                 story_p2: "കൺകെട്ട് വിദ്യകൾ, മെന്റലിസം, വൻ സ്റ്റേജ് ഇല്ല്യൂഷനുകൾ എന്നിവയിലൂടെ ഏതൊരു പരിപാടിയെയും അവിസ്മരണീയമാക്കാൻ അദ്ദേഹം ശ്രദ്ധിക്കുന്നു.",
                 feat_1: "മെന്റലിസം", feat_1_sub: "മനസ്സ് വായിക്കുന്ന കല", feat_2: "ക്ലോസ്-അപ്പ്", feat_2_sub: "കൺമുന്നിലെ മാജിക്", feat_3: "സ്റ്റേജ് ഷോ", feat_3_sub: "വൻ ജനക്കൂട്ടത്തിന്",
                 packages_tag: "പ്രത്യേക പാക്കേജുകൾ", packages_heading: "നിങ്ങൾക്കായുള്ള മാജിക് ഷോകള്‍", packages_sub: "നിങ്ങളുടെ പരിപാടിക്ക് അനുയോജ്യമായ രീതിയിൽ ചിട്ടപ്പെടുത്തിയ പ്രത്യേക ഷോകള്‍.",
@@ -1090,7 +1268,7 @@
                 hub3_t: "ഡെസ്റ്റിനേഷൻ ഇവന്റുകൾ", hub3_d: "വൻകിട വിവാഹങ്ങൾക്കും വാർഷിക മീറ്റുകൾക്കുമായി ഇന്ത്യയൊട്ടാകെ യാത്രകൾ.",
                 form_tag: "തീയതി റിസർവ് ചെയ്യാം", form_heading: "അടുത്ത പരിപാടി മാന്ത്രികമാക്കൂ", form_sub: "വിവരങ്ങൾ നൽകിയ ശേഷം ഒറ്റ ക്ലിക്കിലൂടെ വാട്സാപ്പ് വഴി നേരിട്ട് ബന്ധപ്പെടാം.",
                 label_name: "നിങ്ങളുടെ പേര് *", label_phone: "ഫോൺ / വാട്സാപ്പ് നമ്പർ *", label_event_type: "പരിപാടിയുടെ ഇനം *", label_date: "തീയതിയും സ്ഥലവും *", label_notes: "പ്രത്യേക നിർദ്ദേശങ്ങൾ / ആവശ്യങ്ങൾ", 
-                ph_name: "ഉദാ: രാഹുൽ", ph_phone: "ഉദാ: +91 98765 43210", ph_date: "ഉദാ: 25 ഒക്ടോബർ, കൊച്ചി", ph_notes: "കാണികളുടെ എണ്ണം, സ്ഥലം അല്ലെങ്കിൽ പ്രത്യേക ആവശ്യങ്ങൾ എഴുതുക...",
+                ph_name: "ഉദാ: രാഹുൽ", ph_phone: "ഉദാ: +91 98765 43210", ph_date: "ഉദാ: 25 ഒക്ടോബർ, കൊച്ചി", ph_notes: "കാണികളുടെ എണ്ണം, സ്ഥലം അല്ലെങ്കിൽ പ്രത്യേക ആവശ്യങ്ങൾ എഴുതുക...", ph_loc: "ഉദാ: കൊച്ചി / പാലക്കാട്",
                 opt_corporate: "കോർപ്പറേറ്റ് മീറ്റിംഗ് / ഗാല", opt_wedding: "വിവാഹം / സൽക്കാരം", opt_vip: "പ്രൈവറ്റ് വിഐപി പാർട്ടി", opt_festival: "ഫെസ്റ്റിവൽ / മെഗാ ഇവന്റ്", opt_other: "മറ്റ് പരിപാടികൾ",
                 privacy_note: "നേരിട്ട് സാജന്റെ വാട്സാപ്പിലേക്ക് വിവരങ്ങൾ ലഭിക്കുന്നു", btn_send_whatsapp: "വാട്സാപ്പിൽ അയക്കുക",
                 footer_brand_desc: "വിവാഹങ്ങൾ, കോർപ്പറേറ്റ് മീറ്റിംഗുകൾ, മെഗാ സ്റ്റേജ് ഇവന്റുകൾ എന്നിവയ്ക്ക് അവിസ്മരണീയമായ മാന്ത്രിക അനുഭവം സമ്മാനിക്കുന്നു.", 
@@ -1107,8 +1285,8 @@
                 gallery_tag: "संग्रह", gallery_heading: "जादू के पल",
                 img_gallery_tag: "कैप्चर किया गया जादू", img_gallery_heading: "चित्र गैलरी",
                 about_tag: "हमारा दर्शन", about_heading: "असंभव को गढ़ना", about_role: "पेशेवर भ्रमजालक और मेंटलिस्ट",
-                about_origin: "नन्नियोड, पलक्कड़ • देश भर में", story_title: "16 वर्षों की बेजोड़ मंच कला",
-                story_p1: "पूरे भारत में 16 से अधिक वर्षों के समर्पित प्रदर्शन के साथ, साजन दर्शकों को आकर्षित करके आधुनिक जादू को पुनर्परिभाषित करते हैं।",
+                about_origin: "नन्नियोड, पलक्कड़ • देश भर में", story_title: "20 वर्षों की बेजोड़ मंच कला",
+                story_p1: "पूरे भारत में 20 से अधिक वर्षों के समर्पित प्रदर्शन के साथ, साजन दर्शकों को आकर्षित करके आधुनिक जादू को पुनर्परिभाषित करते हैं।",
                 story_p2: "उनका प्रदर्शन कॉर्पोरेट आयोजनों और भव्य शादियों के लिए तैयार किया गया है, जिसमें माइंड रीडिंग और भव्य भ्रम शामिल हैं।",
                 feat_1: "मेंटलिज़्म", feat_1_sub: "माइंड रीडिंग करतब", feat_2: "क्लोज़-अप", feat_2_sub: "आंखों के ठीक सामने", feat_3: "भव्य मंच", feat_3_sub: "हजारों दर्शकों के लिए",
                 packages_tag: "कस्टम अनुभव", packages_heading: "अनुकूलित शो पैकेज", packages_sub: "विशेष रूप से आपके कार्यक्रम के साथ सहजता से मिश्रण करने के लिए डिज़ाइन किए गए प्रारूप।",
@@ -1126,7 +1304,7 @@
                 hub3_t: "डेस्टिनेशन इवेंट्स", hub3_d: "अखिल भारतीय उड़ान-सुलभ स्थल।",
                 form_tag: "इवेंट पूछताछ", form_heading: "अपनी तिथि आरक्षित करें", form_sub: "व्हाट्सएप पर तत्काल बुकिंग शुरू करने के लिए नीचे विवरण भरें।",
                 label_name: "आपका नाम *", label_phone: "फोन / व्हाट्सएप नंबर *", label_event_type: "इवेंट श्रेणी *", label_date: "लक्षित तिथि और स्थान *", label_notes: "शो आवश्यकताएँ / विशेष अनुरोध", 
-                ph_name: "जैसे राहुल शर्मा", ph_phone: "जैसे +91 98765 43210", ph_date: "जैसे 25 अक्टूबर, कोच्चि", ph_notes: "दर्शकों के आकार या स्थान के बारे में बताएं...",
+                ph_name: "जैसे राहुल शर्मा", ph_phone: "जैसे +91 98765 43210", ph_date: "जैसे 25 अक्टूबर, कोच्चि", ph_notes: "दर्शकों के आकार या स्थान के बारे में बताएं...", ph_loc: "जैसे कोच्चि / पलक्कड़",
                 opt_corporate: "कॉर्पोरेट समिट / गाला", opt_wedding: "शाही विवाह / संगीत", opt_vip: "निजी वीआईपी सभा", opt_festival: "त्योहार / मेगा इवेंट", opt_other: "अन्य पूछताछ",
                 privacy_note: "जादूगर साजन के व्हाट्सएप पर सीधा संदेश", btn_send_whatsapp: "व्हाट्सएप पर बुकिंग भेजें",
                 footer_brand_desc: "पूरे भारत में कॉर्पोरेट सम्मेलनों और शादियों के लिए अविस्मरणीय भ्रम और मनोवैज्ञानिक मेंटलिज़्म बनाना।", 
@@ -1143,8 +1321,8 @@
                 gallery_tag: "தொகுப்பு", gallery_heading: "மாயாஜால தருணங்கள்",
                 img_gallery_tag: "புகைப்படங்கள்", img_gallery_heading: "காட்சியகம்",
                 about_tag: "தத்துவம்", about_heading: "சாத்தியமற்றதை உருவாக்குதல்", about_role: "தொழில்முறை மாய வித்தைக்காரர்",
-                about_origin: "நன்னியோடு, பாலக்காடு • இந்தியா முழுவதும்", story_title: "16 வருட இணையற்ற மேடை கைவினை",
-                story_p1: "இந்தியா முழுவதும் 16 ஆண்டுகளுக்கும் மேலான அர்ப்பணிப்புள்ள செயல்திறனுடன், சாஜன் நவீன மந்திரத்தை மறுவரையறை செய்கிறார்.",
+                about_origin: "நன்னியோடு, பாலக்காடு • இந்தியா முழுவதும்", story_title: "20 வருட இணையற்ற மேடை கைவினை",
+                story_p1: "இந்தியா முழுவதும் 20 ஆண்டுகளுக்கும் மேலான அர்ப்பணிப்புள்ள செயல்திறனுடன், சாஜன் நவீன மந்திரத்தை மறுவரையறை செய்கிறார்.",
                 story_p2: "அவரது திறமை, சர்வதேச கார்ப்பரேட் மாநாடுகள் மற்றும் பிரம்மாண்ட திருமணங்களுக்கான மாயாஜாலங்களை உள்ளடக்கியது.",
                 feat_1: "மெண்டலிசம்", feat_1_sub: "மனம் படிக்கும் வித்தைகள்", feat_2: "க்ளோஸ்-அப்", feat_2_sub: "கண்களுக்கு முன்னால்", feat_3: "பிரம்மாண்ட மேடை", feat_3_sub: "ஆயிரக்கணக்கானோருக்கு",
                 packages_tag: "தனிப்பயன் அனுபவங்கள்", packages_heading: "சிறப்பு நிகழ்ச்சி தொகுப்புகள்", packages_sub: "உங்கள் நிகழ்வோடு தடையின்றி கலக்க வடிவமைக்கப்பட்ட சிறப்பு வடிவங்கள்.",
@@ -1162,7 +1340,7 @@
                 hub3_t: "டெஸ்டினேஷன் நிகழ்வுகள்", hub3_d: "அகில இந்திய விமானங்கள் மூலம் அணுகக்கூடிய இடங்கள்.",
                 form_tag: "நிகழ்வு விசாரணைகள்", form_heading: "உங்கள் தேதியை முன்பதிவு செய்க", form_sub: "வாட்ஸ்அப்பில் உடனடி முன்பதிவைத் தொடங்க கீழே உள்ள விவரங்களை நிரப்பவும்.",
                 label_name: "உங்கள் பெயர் *", label_phone: "தொலைபேசி / WhatsApp *", label_event_type: "நிகழ்வு வகை *", label_date: "தேதி & இடம் *", label_notes: "நிகழ்ச்சி தேவைகள் / கோரிக்கைகள்", 
-                ph_name: "எ.கா. ராகுல்", ph_phone: "எ.கா. +91 98765 43210", ph_date: "எ.கா. அக்டோபர் 25, கொச்சி", ph_notes: "பார்வையாளர்களின் எண்ணிக்கை, இடம் பற்றி சொல்லுங்கள்...",
+                ph_name: "எ.கா. ராகுல்", ph_phone: "எ.கா. +91 98765 43210", ph_date: "எ.கா. அக்டோபர் 25, கொச்சி", ph_notes: "பார்வையாளர்களின் எண்ணிக்கை, இடம் பற்றி சொல்லுங்கள்...", ph_loc: "எ.கா. கொச்சி / பாலக்காடு",
                 opt_corporate: "கார்ப்பரேட் நிகழ்வு", opt_wedding: "திருமணம் / சங்கீத்", opt_vip: "தனிப்பட்ட விஐபி விருந்து", opt_festival: "விழா / மெகா நிகழ்வு", opt_other: "பிற விசாரணைகள்",
                 privacy_note: "மந்திரவாதி சாஜனின் வாட்ஸ்அப்பிற்கு நேரடி செய்தி", btn_send_whatsapp: "WhatsApp-ல் அனுப்பு",
                 footer_brand_desc: "இந்தியா முழுவதும் கார்ப்பரேட் மாநாடுகள் மற்றும் திருமணங்களுக்காக மறக்க முடியாத மாயாஜாலங்களை உருவாக்குதல்.", 
@@ -1179,8 +1357,8 @@
                 gallery_tag: "ಸಂಗ್ರಹ", gallery_heading: "ಜಾದೂವಿನ ಕ್ಷಣಗಳು",
                 img_gallery_tag: "ಸೆರೆಹಿಡಿದ ಜಾದೂ", img_gallery_heading: "ಚಿತ್ರ ಗ್ಯಾಲರಿ",
                 about_tag: "ತತ್ವಶಾಸ್ತ್ರ", about_heading: "ಅಸಾಧ್ಯವನ್ನು ಸೃಷ್ಟಿಸುವುದು", about_role: "ವೃತ್ತಿಪರ ಜಾದೂಗಾರ",
-                about_origin: "ನನ್ನಿಯೋಡ್, ಪಾಲಕ್ಕಾಡ್ • ಭಾರತದಾದ್ಯಂತ", story_title: "16 ವರ್ಷಗಳ ಸಾಟಿಯಿಲ್ಲದ ವೇದಿಕೆ ಕಲೆ",
-                story_p1: "ಭಾರತದಾದ್ಯಂತ 16 ವರ್ಷಗಳಿಗೂ ಹೆಚ್ಚು ಕಾಲ ಮೀಸಲಾದ ಪ್ರದರ್ಶನದೊಂದಿಗೆ, ಸಾಜನ್ ಆಧುನಿಕ ಜಾದೂವನ್ನು ಮರುವ್ಯಾಖ್ಯಾನಿಸುತ್ತಾರೆ.",
+                about_origin: "ನನ್ನಿಯೋಡ್, ಪಾಲಕ್ಕಾಡ್ • ಭಾರತದಾದ್ಯಂತ", story_title: "20 ವರ್ಷಗಳ ಸಾಟಿಯಿಲ್ಲದ ವೇದಿಕೆ ಕಲೆ",
+                story_p1: "ಭಾರತದಾದ್ಯಂತ 20 ವರ್ಷಗಳಿಗೂ ಹೆಚ್ಚು ಕಾಲ ಮೀಸಲಾದ ಪ್ರದರ್ಶನದೊಂದಿಗೆ, ಸಾಜನ್ ಆಧುನಿಕ ಜಾದೂವನ್ನು ಮರುವ್ಯಾಖ್ಯಾನಿಸುತ್ತಾರೆ.",
                 story_p2: "ಅವರ ಪ್ರದರ್ಶನವು ಕಾರ್ಪೊರೇಟ್ ಕಾರ್ಯಕ್ರಮಗಳು ಮತ್ತು ಅದ್ಧೂರಿ ಮದುವೆಗಳಿಗಾಗಿ ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ಮೈಂಡ್ ರೀಡಿಂಗ್ ಮತ್ತು ಭ್ರಮೆಗಳನ್ನು ಒಳಗೊಂಡಿದೆ.",
                 feat_1: "ಮೆಂಟಲಿಸಂ", feat_1_sub: "ಮೈಂಡ್ ರೀಡಿಂಗ್", feat_2: "ಕ್ಲೋಸ್-ಅಪ್", feat_2_sub: "ಕಣ್ಣೆದುರಿನ ಜಾದೂ", feat_3: "ಗ್ರ್ಯಾಂಡ್ ಸ್ಟೇಜ್", feat_3_sub: "ಸಾವಿರಾರು ಜನರಿಗೆ",
                 packages_tag: "ಕಸ್ಟಮ್ ಅನುಭವಗಳು", packages_heading: "ವಿಶೇಷ ಶೋ ಪ್ಯಾಕೇಜ್‌ಗಳು", packages_sub: "ನಿಮ್ಮ ಈವೆಂಟ್‌ನೊಂದಿಗೆ ಮನಬಂದಂತೆ ಬೆರೆಯಲು ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ವಿಶೇಷ ಸ್ವರೂಪಗಳು.",
@@ -1198,7 +1376,7 @@
                 hub3_t: "ಡೆಸ್ಟಿನೇಶನ್ ಈವೆಂಟ್‌ಗಳು", hub3_d: "ಅಖಿಲ ಭಾರತ ವಿಮಾನ-ಪ್ರವೇಶಿಸಬಹುದಾದ ಸ್ಥಳಗಳು.",
                 form_tag: "ಈವೆಂಟ್ ವಿಚಾರಣೆಗಳು", form_heading: "ನಿಮ್ಮ ದಿನಾಂಕವನ್ನು ಕಾಯ್ದಿರಿಸಿ", form_sub: "WhatsApp ನಲ್ಲಿ ತ್ವರಿತ ಬುಕಿಂಗ್ ಪ್ರಾರಂಭಿಸಲು ಕೆಳಗಿನ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ.",
                 label_name: "ನಿಮ್ಮ ಹೆಸರು *", label_phone: "ಫೋನ್ / WhatsApp *", label_event_type: "ಈವೆಂಟ್ ವರ್ಗ *", label_date: "ದಿನಾಂಕ ಮತ್ತು ಸ್ಥಳ *", label_notes: "ಪ್ರದರ್ಶನದ ಅಗತ್ಯತೆಗಳು / ವಿಶೇಷ ವಿನಂತಿಗಳು", 
-                ph_name: "ಉದಾ. ರಾಹುಲ್ ಶರ್ಮಾ", ph_phone: "ಉದಾ. +91 98765 43210", ph_date: "ಉದಾ. 25 ಅಕ್ಟೋಬರ್, ಕೊಚ್ಚಿ", ph_notes: "ಪ್ರೇಕ್ಷಕರ ಗಾತ್ರ, ಸ್ಥಳದ ಬಗ್ಗೆ ನಮಗೆ ತಿಳಿಸಿ...",
+                ph_name: "ಉದಾ. ರಾಹುಲ್ ಶರ್ಮಾ", ph_phone: "ಉದಾ. +91 98765 43210", ph_date: "ಉದಾ. 25 ಅಕ್ಟೋಬರ್, ಕೊಚ್ಚಿ", ph_notes: "ಪ್ರೇಕ್ಷಕರ ಗಾತ್ರ, ಸ್ಥಳದ ಬಗ್ಗೆ ನಮಗೆ ತಿಳಿಸಿ...", ph_loc: "ಉದಾ. ಕೊಚ್ಚಿ / ಪಾಲಕ್ಕಾಡ್",
                 opt_corporate: "ಕಾರ್ಪೊರೇಟ್ ಶೃಂಗಸಭೆ", opt_wedding: "ಮದುವೆ / ಸಂಗೀತ", opt_vip: "ಖಾಸಗಿ ವಿಐಪಿ ಪಾರ್ಟಿ", opt_festival: "ಹಬ್ಬ / ಮೆಗಾ ಈವೆಂಟ್", opt_other: "ಇತರ ವಿಚಾರಣೆಗಳು",
                 privacy_note: "ಜಾದೂಗಾರ ಸಾಜನ್ ಅವರ WhatsApp ಗೆ ನೇರ ಸಂದೇಶ", btn_send_whatsapp: "WhatsApp ನಲ್ಲಿ ಕಳುಹಿಸಿ",
                 footer_brand_desc: "ಭಾರತದಾದ್ಯಂತ ಕಾರ್ಪೊರೇಟ್ ಶೃಂಗಸಭೆಗಳು ಮತ್ತು ಮದುವೆಗಳಿಗಾಗಿ ಮರೆಯಲಾಗದ ಭ್ರಮೆಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು.", 
@@ -1209,22 +1387,22 @@
                 hero_pill: "20+ సంవత్సరాల వేదిక నైపుణ్యం", hero_title_1: "మెజీషియన్ సాజన్.", hero_title_2: "పూర్తిగా అసాధ్యం.",
                 hero_desc: "భారతదేశపు అత్యుత్తమ వివాహాలు మరియు కార్పొరేట్ కార్యక్రమాల కోసం వేదిక భ్రమలు మరియు మైండ్ రీడింగ్.",
                 btn_book_now: "షో బుక్ చేయండి", btn_quick_wa: "WhatsApp చేయండి",
-                mq_corp: "కార్పొరేట్ సమ్మిట్‌‌లు", mq_wed: "రాయల్ వెడ్డింగ్స్", mq_tv: "టీవీ షోలు", mq_award: "అవార్డు వేడుకలు", mq_celeb: "సెలబ్రిటీ ఈవెంట్స్", mq_fest: "కళాశాల పండుగలు",
+                mq_corp: "కార్పొరేట్ సమ్మిట్‌లు", mq_wed: "రాయల్ వెడ్డింగ్స్", mq_tv: "టీవీ షోలు", mq_award: "అవార్డు వేడుకలు", mq_celeb: "సెలబ్రిటీ ఈవెంట్స్", mq_fest: "కళాశాల పండుగలు",
                 stat_years: "క్రియాశీల సంవత్సరాలు", stat_shows: "ప్రదర్శనలు", stat_faces: "ప్రేక్షకులు", stat_satisfaction: "సంతృప్తి రేటింగ్",
                 carousel_tag: "విజువల్ షోకేస్", carousel_heading: "స్టేజ్ & మీడియా షోకేస్", carousel_sub: "అధిక-రిజల్యూషన్ చిత్రాలు మరియు లైవ్ పెర్ఫార్మెన్స్ టీజర్‌లను అన్వేషించండి.",
                 gallery_tag: "కలెక్షన్", gallery_heading: "మ్యాజిక్ క్షణాలు",
                 img_gallery_tag: "బంధించిన మ్యాజిక్", img_gallery_heading: "చిత్ర గ్యాలరీ",
                 about_tag: "తత్వశాస్త్రం", about_heading: "అసాధ్యాన్ని సృష్టించడం", about_role: "ప్రొఫెషనల్ ఇల్యూషనిస్ట్",
-                about_origin: "నన్నియోడ్, పాలక్కాడ్ • దేశవ్యాప్తంగా", story_title: "16 సంవత్సరాల సాటిలేని వేదిక కళ",
-                story_p1: "భారతదేశం అంతటా 16 సంవత్సరాలకు పైగా అంకితభావంతో కూడిన ప్రదర్శనతో, సాజన్ ఆధునిక మ్యాజిక్‌ను పునర్నిర్వచించారు.",
+                about_origin: "నన్నియోడ్, పాలక్కాಡ್ • దేశవ్యాప్తంగా", story_title: "20 సంవత్సరాల సాటిలేని వేదిక కళ",
+                story_p1: "భారతదేశం అంతటా 20 సంవత్సరాలకు పైగా అంకితభావంతో కూడిన ప్రదర్శనతో, సాజన్ ఆధునిక మ్యాజిక్‌ను పునర్నిర్వచించారు.",
                 story_p2: "అతని ప్రదర్శనలో కార్పొరేట్ ఈవెంట్‌లు మరియు వివాహాల కోసం రూపొందించబడిన మైండ్ రీడింగ్ మరియు భ్రమలు ఉన్నాయి.",
                 feat_1: "మెంటలిజం", feat_1_sub: "మైండ్ రీడింగ్ ఫీట్స్", feat_2: "క్లోజ్-అప్", feat_2_sub: "కళ్ళ ముందు మేజిక్", feat_3: "గ్రాండ్ స్టేజ్", feat_3_sub: "వేలాది మందికి",
                 packages_tag: "కస్టమ్ అనుభవాలు", packages_heading: "ప్రత్యేక షో ప్యాకేజీలు", packages_sub: "మీ ఈవెంట్‌తో సజావుగా కలపడానికి రూపొందించబడిన ప్రత్యేక ఫార్మాట్‌లు.",
-                pkg1_tag: "కార్పొరేట్ గాలా", pkg1_title: "ది ఎగ్జిక్యూటివ్ కీనోట్", pkg1_desc: "కస్టమైజ్డ్ మ్యాజికల్ రివీల్స్‌తో కార్పొరేట్ ఈవెంట్‌లను మార్చండి.",
+                pkg1_tag: "కార్ಪొరేట్ గాలా", pkg1_title: "ది ఎగ్జిక్యూటివ్ కీనోట్", pkg1_desc: "కస్టమైజ్డ్ మ్యాజికల్ రివీల్స్‌తో కార్పొరేట్ ఈవెంట్‌లను మార్చండి.",
                 pkg1_f1: "ప్రొడక్ట్ లాంచ్ మ్యాజిక్", pkg1_f2: "నాయకత్వం మైండ్-రీడింగ్", pkg1_f3: "హై-ఇంపాక్ట్ స్టేజింగ్",
-                pkg_popular: "అత్యంత ప్రజాదరణ", pkg2_tag: "వెడ్డింగ్స్ & సంగీత్", pkg2_title: "రాయల్ వెడ్డింగ్ మ్యాజిక్", pkg2_desc: "కాక్‌టెయిల్ పార్టీల సమయంలో ఇంటరాక్టివ్ టేబుల్ మ్యాజిక్‌తో అతిథులను మంత్రముగ్ధులను చేయండి.",
+                pkg_popular: "అత్యంత ప్రజాదరణ", pkg2_tag: "వెడ్డింగ్స్ & సంగీత్", pkg2_title: "రాయల్ వెడ్డింగ్ మ్యాజిక్", pkg2_desc: "కాక్‌టెయిల్ పార్టీల సమయంలో ఇంటరాక్టివ్ టేబుల్ మ్యాజిక్‌‌తో అతిథులను మంత్రముగ్ధులను చేయండి.",
                 pkg2_f1: "టేబుల్-టు-టేబుల్ మ్యాజిక్", pkg2_f2: "వధూవరుల ప్రత్యేక మ్యాజిక్", pkg2_f3: "ఇంటరాక్టివ్ అద్భుతాలు",
-                pkg3_tag: "మెగా ఆడిటోరియం", pkg3_title: "ది గ్రాండ్ స్పెక్టాకిల్", pkg3_desc: "పెద్ద ప్రేక్షకుల కోసం లెవిటేషన్ మరియు టెలిపోర్టేషన్‌‌ను కలిగి ఉన్న పూర్తి-స్థాయి వేదిక మ్యాజిక్.",
+                pkg3_tag: "మెగా ఆడిటోరియం", pkg3_title: "ది గ్రాండ్ స్పెక్టాకిల్", pkg3_desc: "పెద్ద ప్రేక్షకుల కోసం లెవిటేషన్ మరియు టೆలిపోర్టేషన్‌ను కలిగి ఉన్న పూర్తి-స్థాయి వేదిక మ్యాజిక్.",
                 pkg3_f1: "లెవిటేషన్ & టెలిపోర్టేషన్", pkg3_f2: "మెగా ఎస్కేపాలజీ", pkg3_f3: "ప్రొఫెషనల్ సౌండ్ & లైటింగ్",
                 btn_inquire_pkg: "విచారణ చేయండి",
                 loc_tag: "ప్రధాన కార్యాలయం & లభ్యత", loc_heading: "కేరళలో మూలాలు.<br>అన్ని చోట్లా ప్రదర్శనలు.", loc_desc: "మెజీషియన్ సాజన్ నన్నియోడ్, పాలక్కాడ్ ఆధారంగా భారతదేశం అంతటా ప్రధాన వేదిక ప్రదర్శనలు ఇస్తారు.",
@@ -1234,7 +1412,7 @@
                 hub3_t: "డెస్టినేషన్ ఈవెంట్స్", hub3_d: "పాన్-ఇండియా విమాన-ప్రాప్యత గల వేదికలు.",
                 form_tag: "ఈవెంట్ విచారణలు", form_heading: "మీ తేదీని రిజర్వ్ చేయండి", form_sub: "WhatsAppలో తక్షణ బుకింగ్‌ను ప్రారంభించడానికి క్రింది వివరాలను పూరించండి.",
                 label_name: "మీ పేరు *", label_phone: "ఫోన్ / WhatsApp *", label_event_type: "ఈవెంట్ వర్గం *", label_date: "తేదీ & స్థానం *", label_notes: "షో అవసరాలు / ప్రత్యేక అభ్యర్థనలు", 
-                ph_name: "ఉదా. రాహుల్ శర్మ", ph_phone: "ఉదా. +91 98765 43210", ph_date: "ఉదా. అక్టోబర్ 25, కొచ్చి", ph_notes: "ప్రేక్షకుల పరిమాణం, వేదిక గురించి మాకు చెప్పండి...",
+                ph_name: "ఉదా. రాహుల్ శర్మ", ph_phone: "ఉదా. +91 98765 43210", ph_date: "ఉదా. అక్టోబర్ 25, కొచ్చి", ph_notes: "ప్రేక్షకుల పరిమాణం, వేదిక గురించి మాకు చెప్పండి...", ph_loc: "ఉదా. కొచ్చి / పాలక్కాడ్",
                 opt_corporate: "కార్పొరేట్ సమ్మిట్", opt_wedding: "వివాహం / సంగీత్", opt_vip: "ప్రైవేట్ VIP పార్టీ", opt_festival: "పండుగ / మెగా ఈవెంట్", opt_other: "ఇతర విచారణలు",
                 privacy_note: "మెజీషియన్ సాజన్ వాట్సాప్‌కి నేరుగా సందేశం", btn_send_whatsapp: "WhatsAppలో పంపండి",
                 footer_brand_desc: "భారతదేశం అంతటా కార్పొరేట్ సమావేశాలు మరియు వివాహాల కోసం మరచిపోలేని భ్రమలను సృష్టించడం.", 
@@ -1251,8 +1429,8 @@
                 gallery_tag: "القبو", gallery_heading: "لحظات السحر",
                 img_gallery_tag: "السحر الملتقط", img_gallery_heading: "أرشيف الصور",
                 about_tag: "فلسفتنا", about_heading: "صناعة المستحيل", about_role: "ساحر محترف وقارئ أفكار",
-                about_origin: "مقره في نانيود ، بالاكاد • على مستوى البلاد", story_title: "16 عامًا من الحرفية المسرحية التي لا مثيل لها",
-                story_p1: "مع أكثر من 16 عامًا من الأداء المخصص في جميع أنحاء الهند ، يعيد ساجان تعريف السحر الحديث من خلال المزج بين العظمة المسرحية والمشاركة الجماهيرية.",
+                about_origin: "مقره في نانيود ، بالاكاد • على مستوى البلاد", story_title: "20 عامًا من الحرفية المسرحية التي لا مثيل لها",
+                story_p1: "مع أكثر من 20 عامًا من الأداء المخصص في جميع أنحاء الهند ، يعيد ساجان تعريف السحر الحديث من خلال المزج بين العظمة المسرحية والمشاركة الجماهيرية.",
                 story_p2: "يجمع مخزونه بين إتقان خفة اليد ، وقراءة الأفكار النفسية ، والخدع الكبرى المصممة للمؤتمرات وحفلات الزفاف.",
                 feat_1: "قراءة الأفكار", feat_1_sub: "مآثر العقل", feat_2: "عن قرب", feat_2_sub: "أمام عينيك", feat_3: "المسرح الكبير", feat_3_sub: "نظارات للآلاف",
                 packages_tag: "تجارب مخصصة", packages_heading: "باقات عروض مخصصة", packages_sub: "تنسيقات مصممة خصيصًا لتندمج بسلاسة مع مسار رحلتك.",
@@ -1270,7 +1448,7 @@
                 hub3_t: "أحداث الوجهة", hub3_d: "أماكن يسهل الوصول إليها بالطيران في جميع أنحاء الهند.",
                 form_tag: "استفسارات الأحداث", form_heading: "احجز تاريخك", form_sub: "املأ تفاصيل الحدث أدناه لبدء الحجز الفوري على الواتساب.",
                 label_name: "اسمك *", label_phone: "رقم الهاتف / واتساب *", label_event_type: "فئة الحدث *", label_date: "التاريخ والموقع المستهدف *", label_notes: "متطلبات العرض / طلبات خاصة", 
-                ph_name: "مثال: أحمد محمد", ph_phone: "مثال: +91 98765 43210", ph_date: "مثال: 25 أكتوبر ، كوتشي", ph_notes: "أخبرنا عن حجم الجمهور أو المكان...",
+                ph_name: "مثال: أحمد محمد", ph_phone: "مثال: +91 98765 43210", ph_date: "مثال: 25 أكتوبر ، كوتشي", ph_notes: "أخبرنا عن حجم الجمهور أو المكان...", ph_loc: "مثال: كوتشي / بالاكاد",
                 opt_corporate: "مؤتمر شركات / حفل", opt_wedding: "زفاف ملكي / سنجيت", opt_vip: "تجمع كبار الشخصيات", opt_festival: "مهرجان / حدث ضخم", opt_other: "استفسارات أخرى",
                 privacy_note: "إرسال فوري مباشر إلى واتساب الساحر ساجان", btn_send_whatsapp: "أرسل الحجز عبر واتساب",
                 footer_brand_desc: "صنع أوهام لا تُنسى وقراءة الأفكار لمؤتمرات الشركات وحفلات الزفاف الفاخرة والعروض المسرحية في جميع أنحاء الهند.", 
@@ -1366,10 +1544,6 @@
             htmlElement.setAttribute('data-theme', theme);
             theme === 'dark' ? htmlElement.classList.add('dark') : htmlElement.classList.remove('dark');
             localStorage.setItem('sajan_theme', theme);
-
-            if (window.threeScene) {
-                window.threeScene.fog.color.setHex(theme === 'dark' ? 0x000000 : 0xF5F5F7);
-            }
         }
         
         applyTheme(localStorage.getItem('sajan_theme') || 'dark');
@@ -1470,10 +1644,20 @@
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
             const eventType = document.getElementById('eventType').value;
-            const dateLoc = document.getElementById('eventDateLoc').value.trim();
+            
+            // Reconstructed Date Logic
+            const dateVal = document.getElementById('eventDate').value;
+            const locVal = document.getElementById('eventLoc').value.trim();
+            let formattedDate = dateVal;
+            if(dateVal) {
+                const d = new Date(dateVal);
+                formattedDate = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            const dateLocStr = `${formattedDate} - ${locVal}`;
+
             const notes = document.getElementById('eventNotes').value.trim() || 'None';
 
-            const message = `🪄 *SHOW BOOKING INQUIRY - MAGICIAN SAJAN*\n━━━━━━━━━━━━━━━━━━━━\n👤 *Client Name:* ${name}\n📞 *Contact Number:* ${phone}\n🎪 *Event Category:* ${eventType}\n📍 *Date & Location:* ${dateLoc}\n📝 *Show Requirements:*\n${notes}\n━━━━━━━━━━━━━━━━━━━━\n_Location Base: Nanniode, Palakkad_`;
+            const message = `🪄 *SHOW BOOKING INQUIRY - MAGICIAN SAJAN*\n━━━━━━━━━━━━━━━━━━━━\n👤 *Client Name:* ${name}\n📞 *Contact Number:* ${phone}\n🎪 *Event Category:* ${eventType}\n📍 *Date & Location:* ${dateLocStr}\n📝 *Show Requirements:*\n${notes}\n━━━━━━━━━━━━━━━━━━━━\n_Location Base: Nanniode, Palakkad_`;
             window.open(`https://wa.me/919387614714?text=${encodeURIComponent(message)}`, '_blank');
         });
         
@@ -1481,6 +1665,189 @@
             VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
         }
     </script>
+
+
+    <script>
+        /* ================================================================
+           PREMIUM POST-HERO 3D MAGIC PARALLAX
+           True scroll-linked depth using the supplied image assets.
+           Each prop has a different parallax travel, rotation and depth.
+           ================================================================ */
+        (() => {
+            const initMagic3D = () => {
+                const bg = document.getElementById('magic-3d-background');
+                const hero = document.getElementById('home');
+                const hat = document.querySelector('.magic-hat-prop');
+                const leftPigeon = document.querySelector('.magic-pigeon-left');
+                const rightPigeon = document.querySelector('.magic-pigeon-right');
+                const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                if (!bg || !hero || reduced) return;
+
+                const setActive = () => {
+                    const heroBottom = hero.offsetTop + hero.offsetHeight;
+                    const active = window.scrollY > Math.max(80, heroBottom - window.innerHeight * 0.14);
+                    bg.classList.toggle('is-active', active);
+                };
+
+                setActive();
+
+                /* GSAP gives us real scroll progress instead of a continuously
+                   running animation. The props therefore move only as the user
+                   scrolls, with different speeds creating the 3D depth effect. */
+                if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                    gsap.registerPlugin(ScrollTrigger);
+
+                    const props = [
+                        {
+                            el: hat,
+                            x: 125,
+                            y: -520,
+                            z: 170,
+                            rotate: 16,
+                            rotateY: 22,
+                            scale: 0.10,
+                            startX: 0,
+                            startY: 0,
+                            startRotate: 0
+                        },
+                        {
+                            el: leftPigeon,
+                            x: 360,
+                            y: -760,
+                            z: 300,
+                            rotate: -22,
+                            rotateY: -28,
+                            scale: 0.16,
+                            startX: 0,
+                            startY: 0,
+                            startRotate: 0
+                        },
+                        {
+                            el: rightPigeon,
+                            x: -330,
+                            y: -610,
+                            z: 240,
+                            rotate: 25,
+                            rotateY: 30,
+                            scale: 0.12,
+                            startX: 0,
+                            startY: 0,
+                            startRotate: 0
+                        }
+                    ];
+
+                    props.forEach((item) => {
+                        if (!item.el) return;
+
+                        gsap.set(item.el, {
+                            x: item.startX,
+                            y: item.startY,
+                            z: 0,
+                            rotation: item.startRotate,
+                            rotationY: 0,
+                            scale: 1,
+                            transformPerspective: 1200,
+                            force3D: true
+                        });
+
+                        gsap.to(item.el, {
+                            x: item.x,
+                            y: item.y,
+                            z: item.z,
+                            rotation: item.rotate,
+                            rotationY: item.rotateY,
+                            scale: `+=${item.scale}`,
+                            ease: 'none',
+                            overwrite: 'auto',
+                            scrollTrigger: {
+                                trigger: hero,
+                                start: 'bottom bottom',
+                                end: 'bottom -4200',
+                                scrub: 1.15,
+                                invalidateOnRefresh: true,
+                                onEnter: () => bg.classList.add('is-active'),
+                                onEnterBack: () => bg.classList.add('is-active'),
+                                onLeaveBack: () => setActive(),
+                                onUpdate: () => bg.classList.add('is-active')
+                            }
+                        });
+                    });
+
+                    gsap.to('.magic-bg-glow', {
+                        x: 70,
+                        y: -190,
+                        scale: 1.16,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: hero,
+                            start: 'bottom bottom',
+                            end: 'bottom -4200',
+                            scrub: 1.7,
+                            invalidateOnRefresh: true
+                        }
+                    });
+
+                    gsap.to('.magic-bg-ring', {
+                        y: -330,
+                        rotation: 34,
+                        scale: 1.25,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: hero,
+                            start: 'bottom bottom',
+                            end: 'bottom -4200',
+                            scrub: 2,
+                            invalidateOnRefresh: true
+                        }
+                    });
+
+                    ScrollTrigger.refresh();
+                    return;
+                }
+
+                /* Lightweight fallback when GSAP/ScrollTrigger is unavailable. */
+                let ticking = false;
+                const updateFallback = () => {
+                    const heroBottom = hero.offsetTop + hero.offsetHeight;
+                    const progress = Math.max(0, Math.min(1,
+                        (window.scrollY - (heroBottom - window.innerHeight * 0.14)) / 4200
+                    ));
+                    bg.classList.toggle('is-active', progress > 0);
+
+                    const move = (el, x, y, rotate, rotateY, scale) => {
+                        if (!el) return;
+                        el.style.transform =
+                            `translate3d(${x * progress}px, ${y * progress}px, ${170 * progress}px) ` +
+                            `rotate(${rotate * progress}deg) rotateY(${rotateY * progress}deg) scale(${1 + scale * progress})`;
+                    };
+
+                    move(hat, 125, -520, 16, 22, .10);
+                    move(leftPigeon, 360, -760, -22, -28, .16);
+                    move(rightPigeon, -330, -610, 25, 30, .12);
+                    ticking = false;
+                };
+
+                const onScroll = () => {
+                    if (!ticking) {
+                        ticking = true;
+                        requestAnimationFrame(updateFallback);
+                    }
+                };
+
+                window.addEventListener('scroll', onScroll, { passive: true });
+                window.addEventListener('resize', onScroll, { passive: true });
+                updateFallback();
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMagic3D, { once: true });
+            } else {
+                initMagic3D();
+            }
+        })();
+    </script>
+
 </body>
 
 </html>
